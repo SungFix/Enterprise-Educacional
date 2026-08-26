@@ -3593,17 +3593,21 @@ function syncBrandThemeAssets(theme, animate = false) {
     brandImages.forEach(img => img.classList.remove('is-theme-swapping'));
   }
 
-  const refreshThemeIcon = (selector) => {
-    const current = $(selector);
+  const refreshFavicon = () => {
+    const current = $('#favicon32');
     if (!current) return;
     const source = isLight ? current.dataset.lightHref : current.dataset.darkHref;
+    const url = new URL(source, document.baseURI);
+    url.searchParams.set('theme', isLight ? 'light' : 'dark');
+    url.searchParams.set('switch', String(Date.now()));
     const replacement = current.cloneNode(true);
-    replacement.href = `${source}&theme=${isLight ? 'light' : 'dark'}`;
-    current.replaceWith(replacement);
+    replacement.href = url.href;
+    document.querySelectorAll('link[rel~="icon"]').forEach(icon => icon.remove());
+    document.head.appendChild(replacement);
   };
-  refreshThemeIcon('#favicon32');
-  refreshThemeIcon('#favicon16');
-  refreshThemeIcon('#appleTouchIcon');
+  refreshFavicon();
+  const apple = $('#appleTouchIcon');
+  if (apple) apple.href = isLight ? apple.dataset.lightHref : apple.dataset.darkHref;
 }
 
 function applyTheme(theme, { animate = false } = {}) {
