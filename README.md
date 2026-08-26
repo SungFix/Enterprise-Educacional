@@ -325,3 +325,71 @@ Esta rodada prioriza utilidade e robustez, sem adicionar gamificação superfici
 - Aulas e componentes longos receberam contenção local para URLs, código, tabelas e conteúdo extenso, reduzindo risco de overflow lateral.
 - Foram adicionados ajustes específicos para 430 px e 390 px em Home, Aula, Exercícios, Playground, Glossário, Projetos e biblioteca de códigos.
 - CSS antigo de uma interface de cabeçalho de aula já removida foi excluído, junto do estado morto de favoritos que não possuía mais interface.
+
+
+## Aprimoramentos v41
+
+- PWA instalável quando publicado em HTTPS, com cache offline do conteúdo e runtime-cache do Pyodide após o primeiro uso.
+- Sincronização opcional em nuvem via Supabase, com autenticação por e-mail e backup completo por usuário.
+- Verificação automática de projetos com testes objetivos sobre HTML, CSS, JavaScript e Python.
+- Verificação geral do código atual no Playground.
+- Histórico de estudo em 12 semanas com calendário de atividade.
+- Busca tolerante a pequenos erros de digitação.
+- Referências oficiais no fim das aulas.
+- Recuperação adicional de rascunho do Playground.
+- Pipeline de CI para sintaxe, integridade de conteúdo, assets e estrutura.
+- Projeto dividido em CSS, dados, núcleo, recursos de plataforma e bootstrap, mantendo também um HTML único para teste.
+
+A sincronização em nuvem exige que o proprietário configure um projeto Supabase. Consulte `SUPABASE_SETUP.md` e `supabase/schema.sql`.
+
+
+## Ajuste do Progresso
+
+- Domínio por assunto usa quatro colunas em telas largas, evitando um quarto card isolado na linha seguinte.
+- As quatro trilhas aparecem juntas em uma linha no desktop largo.
+- Atividade recente e Próximo passo ocupam uma segunda linha equilibrada.
+- Cards de trilha ficaram mais compactos e mantêm adaptação em notebook, tablet e celular.
+
+
+## Refinamento do Progresso — v43
+
+- Tela de Progresso reorganizada para responder primeiro “o que estudar agora?”.
+- Removida duplicação visual entre módulos zerados e cards de trilha.
+- Módulos aparecem em “Em andamento” somente depois de realmente iniciados.
+- Trilhas ganharam cards compactos com estado, próxima etapa e ação clara.
+- Projetos em andamento aparecem apenas quando alguma etapa foi marcada.
+- Histórico recente foi integrado ao calendário de estudo.
+- Backup, nuvem e instalação foram movidos para um bloco secundário recolhível.
+- Estado inicial com 0% ganhou orientação explícita para a primeira aula.
+- Responsividade específica para desktop, tablet, 760px e 430px.
+
+## Consolidação de qualidade — v44
+
+Esta rodada fecha os principais pontos de melhoria que ainda faltavam sem transformar o site em uma interface mais carregada.
+
+- Trilhas ganharam **Mapa da trilha** com módulos concluídos, módulo atual e próximos módulos, além de links diretos para continuar estudando.
+- Cards de trilha foram simplificados para evitar repetição do mapa e reduzir poluição visual.
+- Revisão inteligente passou a usar **revisão espaçada**: erros voltam mais cedo e acertos consecutivos aumentam gradualmente o intervalo de revisão.
+- Busca global ganhou histórico local, atalhos quando vazia, expansão de grupos e sugestão para pequenas digitações incorretas.
+- Verificador de projetos/código agora identifica melhor a linguagem relacionada ao requisito que falhou e oferece **Corrigir no editor** para abrir diretamente a aba adequada.
+- Sincronização Supabase ganhou modo automático opcional, debounce e detecção de conflito entre dados locais e backup remoto antes de sobrescrever conteúdo.
+- Trilhas concluídas podem liberar **certificado**, desde que também atendam critérios mínimos de prática, checkpoints e projeto.
+- Adicionado link de acessibilidade “Pular para o conteúdo principal”.
+- Sidebar mobile das aulas e popover do Glossário receberam comportamento consistente de `Esc`, clique fora e mudança de rota.
+- Search index passou a armazenar textos normalizados previamente, reduzindo trabalho repetido durante a digitação.
+- CI/validação agora também verifica IDs de exercícios/projetos/desafios, vínculos de exercícios com aulas, manifest PWA, versões de cache, breakpoints principais e ausência de `overflow-x:hidden` global usado para mascarar bugs.
+- Gerados relatórios `reports/CONTENT_AUDIT_V44.md` e `reports/QA_V44.md`.
+- Criado `scripts/build-standalone.py` para reconstruir de forma reproduzível o `Enterprise-Educacional.html` autossuficiente.
+
+A sincronização em nuvem continua dependendo de um projeto Supabase configurado pelo proprietário. A v44 não inclui credenciais privadas nem um backend de terceiros pré-configurado.
+
+
+## Correção de ícones — v46
+
+- corrigida a geração do HTML único: o cache-busting `?v=...` não é mais anexado aos data URIs de branding/favicons;
+- adicionada camada de compatibilidade para ícones SVG internos, evitando falhas de `<use href="#..."><\/use>` ao abrir o HTML como arquivo local em navegadores mais restritivos;
+- os ícones continuam acompanhando Dark/Light Mode e controles dinâmicos.
+
+## Refinamento de produto — v46
+
+Esta revisão prioriza consistência e maturidade visual sem adicionar novas mecânicas. Foram recalibrados Home, Header, Trilhas, Aula, Exercícios, Projetos, Desafios, Playground, Glossário, Progresso, Footer e breakpoints intermediários/mobile. O roteador também passa a identificar a página ativa em `body[data-page]`, permitindo ajustes futuros sem seletores globais frágeis.

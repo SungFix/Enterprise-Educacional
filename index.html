@@ -18,8 +18,9 @@
       } catch {}
     })();
   </script>
-  <link id="favicon32" rel="icon" type="image/png" sizes="32x32" href="assets/branding/favicon-32.png?v=42&amp;theme=dark" data-dark-href="assets/branding/favicon-32.png?v=42" data-light-href="assets/branding/favicon-light-32.png?v=42" />
-  <link id="appleTouchIcon" rel="apple-touch-icon" sizes="180x180" href="assets/branding/apple-touch-icon.png?v=41&amp;theme=dark" data-dark-href="assets/branding/apple-touch-icon.png?v=41" data-light-href="assets/branding/apple-touch-icon-light.png?v=41" />
+  <link id="favicon32" rel="icon" type="image/png" sizes="32x32" href="assets/branding/favicon-32.png?v=46" data-dark-href="assets/branding/favicon-32.png?v=46" data-light-href="assets/branding/favicon-light-32.png?v=46" />
+  <link id="favicon16" rel="icon" type="image/png" sizes="16x16" href="assets/branding/favicon-16.png?v=46" data-dark-href="assets/branding/favicon-16.png?v=46" data-light-href="assets/branding/favicon-light-16.png?v=46" />
+  <link id="appleTouchIcon" rel="apple-touch-icon" sizes="180x180" href="assets/branding/apple-touch-icon.png?v=46" data-dark-href="assets/branding/apple-touch-icon.png?v=46" data-light-href="assets/branding/apple-touch-icon-light.png?v=46" />
   <script>
     (() => {
       const theme = document.documentElement.dataset.theme;
@@ -29,14 +30,19 @@
         if (el) el.href = isLight ? lightHref : darkHref;
       };
       setTimeout(() => {
-        setHref('favicon32', 'assets/branding/favicon-32.png?v=42&theme=dark', 'assets/branding/favicon-light-32.png?v=42&theme=light');
-        setHref('appleTouchIcon', 'assets/branding/apple-touch-icon.png?v=41&theme=dark', 'assets/branding/apple-touch-icon-light.png?v=41&theme=light');
+        setHref('favicon32', 'assets/branding/favicon-32.png?v=46', 'assets/branding/favicon-light-32.png?v=46');
+        setHref('favicon16', 'assets/branding/favicon-16.png?v=46', 'assets/branding/favicon-light-16.png?v=46');
+        setHref('appleTouchIcon', 'assets/branding/apple-touch-icon.png?v=46', 'assets/branding/apple-touch-icon-light.png?v=46');
       }, 0);
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=40" />
+  <link rel="manifest" href="manifest.webmanifest?v=46" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="stylesheet" href="styles.css?v=46" />
 </head>
 <body>
+  <a class="skip-link" href="#mainContent">Pular para o conteúdo principal</a>
   <svg class="icon-sprite" aria-hidden="true" focusable="false">
     <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.25 4.25"/></symbol>
     <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.75"/><path d="M12 2.75v2.1M12 19.15v2.1M2.75 12h2.1M19.15 12h2.1M5.46 5.46l1.48 1.48M17.06 17.06l1.48 1.48M18.54 5.46l-1.48 1.48M6.94 17.06l-1.48 1.48"/></symbol>
@@ -82,7 +88,7 @@
   <header class="site-header" id="siteHeader">
     <div class="shell header-inner">
       <a class="brand" href="#home" aria-label="Enterprise Educacional — início">
-        <span class="brand-mark" aria-hidden="true"><img class="brand-symbol" src="assets/branding/enterprise-symbol.png?v=40" data-dark-src="assets/branding/enterprise-symbol.png?v=40" data-light-src="assets/branding/enterprise-symbol-light.png?v=40" alt="" /></span>
+        <span class="brand-mark" aria-hidden="true"><img class="brand-symbol" src="assets/branding/enterprise-symbol.png?v=46" data-dark-src="assets/branding/enterprise-symbol.png?v=46" data-light-src="assets/branding/enterprise-symbol-light.png?v=46" alt="" /></span>
         <span class="brand-name">Enterprise Educacional</span>
       </a>
 
@@ -125,9 +131,9 @@
           <div class="hero-copy">
             <div class="eyebrow"><span class="status-dot"></span> Aprenda programação construindo</div>
             <h1>Aprenda. Pratique.<br><span class="text-muted">Construa de verdade.</span></h1>
-            <p class="hero-lead">Uma plataforma completa de desenvolvimento: aulas profundas, exemplos executáveis, exercícios com feedback, desafios progressivos e projetos que viram portfólio.</p>
+            <p class="hero-lead">Aprenda com explicações claras, teste o código na hora, pratique com feedback e avance até projetos completos.</p>
             <div class="hero-actions"><a class="button primary" href="#trilhas">Começar agora</a><a class="button secondary" href="#playground"><svg class="ui-icon"><use href="#icon-terminal"></use></svg>Abrir Playground</a></div>
-            <div class="hero-meta" aria-label="Recursos da plataforma"><span>Sem cadastro obrigatório</span><span>Progresso local</span><span>Editor isolado</span></div>
+            <div class="hero-meta" aria-label="Recursos da plataforma"><span>Comece sem cadastro</span><span>Progresso salvo</span><span>Prática no navegador</span></div>
           </div>
 
           <div class="hero-panel" aria-label="Prévia do aprendizado">
@@ -175,7 +181,12 @@
       </div>
     </section>
 
-    <section class="page" data-page="trilhas" id="trilhas"><div class="shell page-shell"><div class="page-header"><span class="eyebrow simple">Trilhas de aprendizado</span><h1>Do primeiro código ao seu primeiro projeto.</h1><p>Quatro trilhas completas, organizadas em módulos progressivos e conectadas a exercícios, desafios e projetos.</p></div><div class="track-grid" id="trackGrid"></div></div></section>
+    <section class="page" data-page="trilhas" id="trilhas"><div class="shell page-shell"><div class="page-header"><span class="eyebrow simple">Trilhas de aprendizado</span><h1>Do primeiro código ao seu primeiro projeto.</h1><p>Quatro trilhas completas, organizadas em módulos progressivos e conectadas a exercícios, desafios e projetos.</p></div>
+        <section class="learning-roadmap" aria-labelledby="roadmapTitle">
+          <div class="learning-roadmap-head"><div><span class="eyebrow simple">Mapa da trilha</span><h2 id="roadmapTitle">Veja exatamente onde você está.</h2><p>Escolha uma tecnologia para visualizar módulos concluídos, o ponto atual e o que vem depois.</p></div><div class="roadmap-course-tabs" id="roadmapCourseTabs" role="tablist" aria-label="Escolher trilha"></div></div>
+          <div class="roadmap-stage" id="roadmapMap" role="tabpanel" aria-live="polite"></div>
+        </section>
+        <div class="track-grid" id="trackGrid"></div></div></section>
 
     <section class="page" data-page="aula" id="aula">
       <div class="lesson-reading-progress" aria-hidden="true"><span id="lessonReadingBar"></span></div>
@@ -205,7 +216,7 @@
         <div class="playground-runtime-note"><span class="runtime-dot"></span><strong>Execução segura</strong><span>Web em iframe sandbox · Python em Web Worker com Pyodide carregado sob demanda</span></div>
         <div class="workbench" id="workbench">
           <section class="editor-pane">
-            <div class="pane-head editor-pane-head"><div class="tabs" role="tablist" aria-label="Linguagens" id="editorTabs"><button role="tab" aria-selected="true" data-lang="html"><svg class="ui-icon"><use href="#icon-html"></use></svg>HTML</button><button role="tab" aria-selected="false" data-lang="css"><svg class="ui-icon"><use href="#icon-css"></use></svg>CSS</button><button role="tab" aria-selected="false" data-lang="js"><svg class="ui-icon"><use href="#icon-js"></use></svg>JavaScript</button><button role="tab" aria-selected="false" data-lang="python"><svg class="ui-icon"><use href="#icon-python"></use></svg>Python</button></div><div class="pane-tools"><div class="editor-main-actions"><button class="text-button playground-save-button" id="savePlaygroundProject" type="button" title="Escolher linguagens e salvar como projeto"><svg class="ui-icon"><use href="#icon-save"></use></svg>Salvar</button><button class="text-button" id="openSavedCodes" type="button"><svg class="ui-icon"><use href="#icon-folder"></use></svg>Meus códigos</button><button class="text-button" id="playgroundHistoryToggle" type="button" aria-expanded="false" aria-controls="playgroundHistoryPanel"><svg class="ui-icon"><use href="#icon-clock"></use></svg>Histórico</button></div><details class="editor-more-menu"><summary>Mais <svg class="ui-icon"><use href="#icon-chevron-down"></use></svg></summary><div class="editor-more-popover"><button class="editor-more-action" id="formatCode" type="button" title="Organizar indentação (Alt+Shift+F)">Formatar código <kbd>Alt ⇧ F</kbd></button><button class="editor-more-action" id="copyCode" type="button"><span>Copiar código</span><kbd>Ctrl C</kbd></button><button class="editor-more-action danger" id="clearEditor" type="button">Limpar editor</button></div></details><button class="pane-icon-button" id="fullscreenPlayground" type="button" aria-label="Editor em tela cheia" title="Editor em tela cheia"><svg class="ui-icon"><use href="#icon-expand"></use></svg></button></div></div>
+            <div class="pane-head editor-pane-head"><div class="tabs" role="tablist" aria-label="Linguagens" id="editorTabs"><button role="tab" aria-selected="true" data-lang="html"><svg class="ui-icon"><use href="#icon-html"></use></svg>HTML</button><button role="tab" aria-selected="false" data-lang="css"><svg class="ui-icon"><use href="#icon-css"></use></svg>CSS</button><button role="tab" aria-selected="false" data-lang="js"><svg class="ui-icon"><use href="#icon-js"></use></svg>JavaScript</button><button role="tab" aria-selected="false" data-lang="python"><svg class="ui-icon"><use href="#icon-python"></use></svg>Python</button></div><div class="pane-tools"><div class="editor-main-actions"><button class="text-button playground-save-button" id="savePlaygroundProject" type="button" title="Escolher linguagens e salvar como projeto"><svg class="ui-icon"><use href="#icon-save"></use></svg>Salvar</button><button class="text-button" id="openSavedCodes" type="button"><svg class="ui-icon"><use href="#icon-folder"></use></svg>Meus códigos</button><button class="text-button" id="playgroundHistoryToggle" type="button" aria-expanded="false" aria-controls="playgroundHistoryPanel"><svg class="ui-icon"><use href="#icon-clock"></use></svg>Histórico</button></div><details class="editor-more-menu"><summary>Mais <svg class="ui-icon"><use href="#icon-chevron-down"></use></svg></summary><div class="editor-more-popover"><button class="editor-more-action" id="formatCode" type="button" title="Organizar indentação (Alt+Shift+F)">Formatar código <kbd>Alt ⇧ F</kbd></button><button class="editor-more-action" id="verifyCurrentCode" type="button"><span>Verificar código</span><kbd>Testes</kbd></button><button class="editor-more-action" id="copyCode" type="button"><span>Copiar código</span><kbd>Ctrl C</kbd></button><button class="editor-more-action danger" id="clearEditor" type="button">Limpar editor</button></div></details><button class="pane-icon-button" id="fullscreenPlayground" type="button" aria-label="Editor em tela cheia" title="Editor em tela cheia"><svg class="ui-icon"><use href="#icon-expand"></use></svg></button></div></div>
             <div class="playground-history-panel" id="playgroundHistoryPanel" hidden><div class="playground-history-head"><div><strong>Histórico do código</strong><span>Versões salvas automaticamente neste navegador.</span></div><button class="text-button" id="clearPlaygroundHistory" type="button">Limpar histórico</button></div><div class="playground-history-list" id="playgroundHistoryList"></div></div>
             <div class="editor-findbar" id="editorFindbar" hidden><label><span>Buscar</span><input id="editorFindInput" type="search" autocomplete="off" spellcheck="false" placeholder="Texto no arquivo..." /></label><span class="editor-find-count" id="editorFindCount">0/0</span><button class="pane-icon-button" id="editorFindPrev" type="button" aria-label="Ocorrência anterior" title="Anterior">↑</button><button class="pane-icon-button" id="editorFindNext" type="button" aria-label="Próxima ocorrência" title="Próxima">↓</button><button class="pane-icon-button" id="editorFindClose" type="button" aria-label="Fechar busca" title="Fechar">×</button></div>
             <div class="editor-body"><div class="editor-gutter" id="editorGutter" aria-hidden="true">1</div><div class="editor-code-wrap" id="editorCodeWrap"><div class="editor-active-line" id="editorActiveLine" aria-hidden="true"></div><pre class="code-highlight" id="codeHighlight" aria-hidden="true"><code></code></pre><div class="editor-marker-layer" id="editorMarkerLayer" aria-hidden="true"></div><textarea id="codeEditor" spellcheck="false" aria-label="Editor de código" aria-describedby="editorProblemsSummary" autocomplete="off" autocapitalize="off" wrap="off"></textarea><div class="editor-autocomplete" id="editorAutocomplete" role="listbox" aria-label="Sugestões de código" hidden></div><div class="editor-hover-doc" id="editorHoverDoc" role="tooltip" hidden></div></div></div>
@@ -225,13 +236,69 @@
 
     <section class="page" data-page="glossario" id="glossario"><div class="shell page-shell"><div class="page-header"><span class="eyebrow simple">Conceitos sem complicação</span><h1>Glossário</h1><p>Definições curtas, explicações e conexões com as aulas em que cada conceito aparece.</p></div><div class="glossary-layout"><div class="glossary-list-panel"><div class="glossary-controls"><label class="search-field"><svg class="ui-icon" aria-hidden="true"><use href="#icon-search"></use></svg><input id="glossarySearch" type="search" placeholder="Buscar conceito, linguagem ou termo..." /></label><section class="glossary-filter-group" aria-labelledby="glossaryCategoryLabel"><div class="glossary-filter-heading"><span id="glossaryCategoryLabel">Categoria</span></div><div class="glossary-categories" id="glossaryCategories" aria-label="Categorias do glossário"></div></section><section class="glossary-filter-group glossary-letter-group" aria-labelledby="glossaryLetterLabel"><div class="glossary-filter-heading"><span id="glossaryLetterLabel">Inicial</span><span class="glossary-result-meta" id="glossaryResultMeta"></span></div><div class="alphabet" id="alphabet" aria-label="Filtrar glossário por letra"></div></section></div><div class="glossary-list" id="glossaryList"></div></div><article class="glossary-detail" id="glossaryDetail"></article></div></div></section>
 
-    <section class="page" data-page="progresso" id="progresso"><div class="shell page-shell"><div class="page-header split"><div><span class="eyebrow simple">Seu aprendizado</span><h1>Progresso</h1><p>Acompanhe o que você concluiu, sua atividade recente e o próximo passo recomendado.</p></div><button class="button danger-ghost" id="resetProgress">Redefinir progresso</button></div><div class="progress-summary" id="progressSummary"></div><section class="data-management-card" aria-labelledby="dataManagementTitle"><div class="data-management-copy"><span class="data-management-icon"><svg class="ui-icon"><use href="#icon-database"></use></svg></span><div><span class="detail-kicker">Seus dados</span><h2 id="dataManagementTitle">Backup e restauração</h2><p>Proteja progresso, notas, checkpoints, histórico do Playground e projetos salvos em um único arquivo.</p></div></div><div class="data-management-actions"><button class="button secondary" id="exportDataBackup" type="button"><svg class="ui-icon"><use href="#icon-download"></use></svg>Baixar backup</button><button class="button secondary" id="importDataBackup" type="button"><svg class="ui-icon"><use href="#icon-upload"></use></svg>Restaurar backup</button><input id="dataBackupInput" type="file" accept="application/json,.json,.ee-backup" hidden></div></section><section class="learning-intelligence-section"><div class="section-heading compact"><div><span class="eyebrow simple">Revisão inteligente</span><h2>O que merece sua atenção agora</h2></div></div><div class="review-center" id="reviewCenter"></div></section><section class="learning-intelligence-section"><div class="section-heading compact"><div><span class="eyebrow simple">Domínio por assunto</span><h2>Entenda onde você está forte e onde revisar</h2></div></div><div class="mastery-grid" id="masteryGrid"></div></section><div class="progress-grid" id="progressGrid"></div><section class="achievement-section"><div class="section-heading compact"><div><span class="eyebrow simple">Conquistas</span><h2>Marcos da sua jornada</h2></div></div><div class="achievement-grid" id="achievementGrid"></div></section></div></section>
+    <section class="page" data-page="progresso" id="progresso">
+      <div class="shell page-shell progress-page-shell">
+        <div class="page-header split progress-page-header">
+          <div><span class="eyebrow simple">Seu aprendizado</span><h1>Progresso</h1><p>Veja onde você está, o que merece revisão e qual é o melhor próximo passo.</p></div>
+          <button class="button danger-ghost compact" id="resetProgress" type="button">Redefinir progresso</button>
+        </div>
+
+        <div class="progress-overview" id="progressSummary"></div>
+
+        <section class="progress-section progress-journey-section" aria-labelledby="progressJourneyTitle">
+          <div class="section-heading compact"><div><span class="eyebrow simple">Agora</span><h2 id="progressJourneyTitle">Seu próximo passo</h2></div></div>
+          <div id="progressJourney"></div>
+        </section>
+
+        <section class="progress-section" aria-labelledby="progressTracksTitle">
+          <div class="section-heading compact progress-section-heading"><div><span class="eyebrow simple">Trilhas</span><h2 id="progressTracksTitle">Seu caminho por tecnologia</h2></div><a class="text-link" href="#trilhas">Ver todas as trilhas →</a></div>
+          <div class="progress-track-list" id="progressTracks"></div>
+        </section>
+
+        <section class="progress-section learning-intelligence-section" aria-labelledby="progressReviewTitle">
+          <div class="section-heading compact"><div><span class="eyebrow simple">Revisão inteligente</span><h2 id="progressReviewTitle">O que merece sua atenção</h2></div></div>
+          <div class="review-center" id="reviewCenter"></div>
+        </section>
+
+        <section class="progress-section learning-intelligence-section" id="progressMasterySection" aria-labelledby="progressMasteryTitle" hidden>
+          <div class="section-heading compact"><div><span class="eyebrow simple">Em andamento</span><h2 id="progressMasteryTitle">Assuntos que você está desenvolvendo</h2></div></div>
+          <div class="mastery-grid" id="masteryGrid"></div>
+        </section>
+
+        <section class="progress-section" id="progressProjectsSection" aria-labelledby="progressProjectsTitle" hidden>
+          <div class="section-heading compact progress-section-heading"><div><span class="eyebrow simple">Projetos</span><h2 id="progressProjectsTitle">Projetos em andamento</h2></div><a class="text-link" href="#projetos">Ver projetos →</a></div>
+          <div class="progress-projects" id="progressProjects"></div>
+        </section>
+
+        <section class="study-history-section progress-section" aria-labelledby="studyHistoryTitle">
+          <div class="section-heading compact"><div><span class="eyebrow simple">Histórico de estudo</span><h2 id="studyHistoryTitle">Atividade das últimas 12 semanas</h2></div><div class="study-history-summary" id="studyHistorySummary"></div></div>
+          <div class="study-heatmap-wrap"><div class="study-heatmap" id="studyHeatmap" role="img" aria-label="Calendário de atividade de estudo"></div><div class="study-heatmap-legend"><span>Menos</span><i data-level="0"></i><i data-level="1"></i><i data-level="2"></i><i data-level="3"></i><i data-level="4"></i><span>Mais</span></div></div>
+          <div class="progress-activity" id="progressActivity"></div>
+        </section>
+
+        <section class="achievement-section progress-section" aria-labelledby="progressAchievementsTitle">
+          <div class="section-heading compact"><div><span class="eyebrow simple">Marcos</span><h2 id="progressAchievementsTitle">Conquistas relevantes</h2></div></div>
+          <div class="achievement-grid" id="achievementGrid"></div>
+        </section>
+
+        <details class="progress-utilities">
+          <summary><span><svg class="ui-icon"><use href="#icon-database"></use></svg><strong>Dados, conta e dispositivo</strong></span><small>Backup, sincronização e instalação</small></summary>
+          <div class="progress-utilities-body">
+            <section class="data-management-card" aria-labelledby="dataManagementTitle"><div class="data-management-copy"><span class="data-management-icon"><svg class="ui-icon"><use href="#icon-database"></use></svg></span><div><span class="detail-kicker">Seus dados</span><h2 id="dataManagementTitle">Backup e restauração</h2><p>Proteja progresso, notas, checkpoints, histórico do Playground e projetos salvos em um único arquivo.</p></div></div><div class="data-management-actions"><button class="button secondary" id="exportDataBackup" type="button"><svg class="ui-icon"><use href="#icon-download"></use></svg>Baixar backup</button><button class="button secondary" id="importDataBackup" type="button"><svg class="ui-icon"><use href="#icon-upload"></use></svg>Restaurar backup</button><input id="dataBackupInput" type="file" accept="application/json,.json,.ee-backup" hidden></div></section>
+            <div class="platform-tools-grid">
+              <section class="platform-tool-card cloud-card" aria-labelledby="cloudSyncTitle"><div class="platform-tool-icon"><svg class="ui-icon"><use href="#icon-database"></use></svg></div><div class="platform-tool-copy"><span class="detail-kicker">Conta e nuvem</span><h2 id="cloudSyncTitle">Sincronização entre dispositivos</h2><p>Conecte um backend Supabase para levar progresso, notas e projetos salvos para outros dispositivos.</p><div class="platform-tool-status" id="cloudSyncStatus"><span class="status-dot"></span><span>Não configurado</span></div></div><div class="platform-tool-actions"><button class="button secondary" id="openCloudSync" type="button">Configurar nuvem</button></div></section>
+              <section class="platform-tool-card pwa-card" aria-labelledby="installAppTitle"><div class="platform-tool-icon"><svg class="ui-icon"><use href="#icon-download"></use></svg></div><div class="platform-tool-copy"><span class="detail-kicker">Offline</span><h2 id="installAppTitle">Instalar como aplicativo</h2><p>Quando publicado por HTTPS, o site pode ser instalado e manter aulas e interface disponíveis offline.</p><div class="platform-tool-status" id="pwaStatus"><span class="status-dot"></span><span>Verificando disponibilidade…</span></div></div><div class="platform-tool-actions"><button class="button secondary" id="installPwaButton" type="button" disabled>Instalar aplicativo</button></div></section>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
 
     <section class="page" data-page="not-found" id="notFound"><div class="shell not-found"><div class="not-found-code">404</div><span class="eyebrow simple">Rota não encontrada</span><h1>Essa rota saiu do código.</h1><p>O conteúdo que você procurou não existe ou mudou de lugar.</p><div class="hero-actions"><a class="button primary" href="#home">Voltar para Home</a><a class="button secondary" href="#trilhas">Explorar Trilhas</a></div></div></section>
   </main>
 
   <footer class="site-footer">
-    <div class="shell footer-grid"><div class="footer-brand"><a class="brand" href="#home"><span class="brand-mark" aria-hidden="true"><img class="brand-symbol" src="assets/branding/enterprise-symbol.png?v=40" data-dark-src="assets/branding/enterprise-symbol.png?v=40" data-light-src="assets/branding/enterprise-symbol-light.png?v=40" alt="" /></span><span class="brand-name">Enterprise Educacional</span></a><p>Aprenda programação na prática, do primeiro conceito aos seus próprios projetos.</p></div><div><h2>Aprender</h2><a href="#trilhas">Trilhas</a><a href="#exercicios">Exercícios</a><a href="#desafios">Desafios</a><a href="#projetos">Projetos</a></div><div><h2>Ferramentas</h2><a href="#playground">Playground</a><a href="#glossario">Glossário</a><a href="#progresso">Progresso</a></div></div>
+    <div class="shell footer-grid"><div class="footer-brand"><a class="brand" href="#home"><span class="brand-mark" aria-hidden="true"><img class="brand-symbol" src="assets/branding/enterprise-symbol.png?v=46" data-dark-src="assets/branding/enterprise-symbol.png?v=46" data-light-src="assets/branding/enterprise-symbol-light.png?v=46" alt="" /></span><span class="brand-name">Enterprise Educacional</span></a><p>Aprenda programação na prática, do primeiro conceito aos seus próprios projetos.</p></div><div><h2>Aprender</h2><a href="#trilhas">Trilhas</a><a href="#exercicios">Exercícios</a><a href="#desafios">Desafios</a><a href="#projetos">Projetos</a></div><div><h2>Ferramentas</h2><a href="#playground">Playground</a><a href="#glossario">Glossário</a><a href="#progresso">Progresso</a></div></div>
     <div class="shell footer-bottom"><span>© 2026 Enterprise Educacional</span><span>Design, código e prática no mesmo lugar.</span></div>
   </footer>
 
@@ -266,11 +333,43 @@
     </div>
   </dialog>
 
+  <dialog class="saved-code-dialog cloud-sync-dialog" id="cloudSyncDialog">
+    <form class="saved-code-modal cloud-sync-modal" id="cloudSyncForm" method="dialog">
+      <div class="saved-code-dialog-head"><div><span class="detail-kicker">Sincronização opcional</span><strong>Conta e nuvem</strong><p>O site continua funcionando sem conta. Para sincronizar, conecte seu próprio projeto Supabase.</p></div><button class="icon-button" id="closeCloudSync" type="button" aria-label="Fechar"><svg class="ui-icon"><use href="#icon-close"></use></svg></button></div>
+      <div class="saved-code-dialog-body cloud-sync-body">
+        <section class="cloud-config-section"><div class="cloud-section-head"><strong>1. Backend</strong><span id="cloudConfigState">Não configurado</span></div><div class="cloud-fields"><label><span>URL do projeto Supabase</span><input id="cloudProjectUrl" type="url" autocomplete="off" placeholder="https://seu-projeto.supabase.co"></label><label><span>Chave anon/public</span><input id="cloudAnonKey" type="password" autocomplete="off" placeholder="eyJ..."></label></div><p class="cloud-help">A chave pública pode ficar no navegador. Nunca use a service_role. O ZIP do projeto inclui o SQL necessário para criar a tabela protegida por RLS.</p><button class="button secondary compact" id="saveCloudConfig" type="button">Salvar configuração</button></section>
+        <section class="cloud-auth-section"><div class="cloud-section-head"><strong>2. Conta</strong><span id="cloudAccountState">Desconectado</span></div><div class="cloud-fields"><label><span>E-mail</span><input id="cloudEmail" type="email" autocomplete="email" placeholder="voce@exemplo.com"></label><label><span>Senha</span><input id="cloudPassword" type="password" autocomplete="current-password" minlength="6" placeholder="••••••••"></label></div><div class="cloud-auth-actions"><button class="button secondary compact" id="cloudSignUp" type="button">Criar conta</button><button class="button primary compact" id="cloudSignIn" type="button">Entrar</button><button class="button danger-ghost compact" id="cloudSignOut" type="button" hidden>Sair</button></div></section>
+        <section class="cloud-sync-section"><div class="cloud-section-head"><strong>3. Sincronizar</strong><span id="cloudLastSync">Nunca sincronizado</span></div><div class="cloud-sync-actions"><button class="button secondary" id="cloudPush" type="button" disabled><svg class="ui-icon"><use href="#icon-upload"></use></svg>Enviar este dispositivo</button><button class="button secondary" id="cloudPull" type="button" disabled><svg class="ui-icon"><use href="#icon-download"></use></svg>Restaurar da nuvem</button></div><label class="cloud-auto-sync"><input id="cloudAutoSync" type="checkbox"><span><strong>Sincronização automática</strong><small>Quando estiver conectado, envia alterações locais depois de alguns segundos. Se houver dados mais novos na nuvem, avisa antes de substituir.</small></span></label><p class="cloud-help">Enviar substitui o backup da nuvem. Restaurar substitui os dados locais após confirmação. Use o backup local antes de restaurar se quiser uma cópia extra.</p></section>
+        <p class="saved-code-validation" id="cloudSyncMessage" hidden></p>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="saved-code-dialog project-verifier-dialog" id="projectVerifierDialog">
+    <div class="saved-code-modal project-verifier-modal">
+      <div class="saved-code-dialog-head"><div><span class="detail-kicker">Testes automáticos</span><strong id="projectVerifierTitle">Verificar código</strong><p id="projectVerifierDescription">Análise do código que está atualmente no Playground.</p></div><button class="icon-button" id="closeProjectVerifier" type="button" aria-label="Fechar"><svg class="ui-icon"><use href="#icon-close"></use></svg></button></div>
+      <div class="project-verifier-summary" id="projectVerifierSummary"></div>
+      <div class="project-verifier-tests" id="projectVerifierTests"></div>
+      <div class="saved-codes-footer"><span>Os testes verificam estrutura e sinais objetivos no código; eles não substituem uma revisão humana do projeto.</span><a class="button secondary" href="#playground" id="projectVerifierOpenPlayground">Abrir Playground</a></div>
+    </div>
+  </dialog>
+
+  <dialog class="saved-code-dialog certificate-dialog" id="certificateDialog">
+    <div class="saved-code-modal certificate-modal">
+      <div class="saved-code-dialog-head"><div><span class="detail-kicker">Conclusão de trilha</span><strong>Certificado Enterprise Educacional</strong><p>Disponível quando os critérios da trilha forem concluídos.</p></div><button class="icon-button" id="closeCertificate" type="button" aria-label="Fechar"><svg class="ui-icon"><use href="#icon-close"></use></svg></button></div>
+      <div class="certificate-controls"><label><span>Nome no certificado</span><input id="certificateName" type="text" maxlength="90" placeholder="Seu nome" autocomplete="name"></label></div>
+      <article class="certificate-preview" id="certificatePreview" aria-live="polite"></article>
+      <div class="saved-codes-footer"><span>Você pode imprimir ou salvar como PDF pelo navegador.</span><button class="button primary" id="printCertificate" type="button"><svg class="ui-icon"><use href="#icon-download"></use></svg>Imprimir / salvar PDF</button></div>
+    </div>
+  </dialog>
+
   <div class="term-popover" id="termPopover" hidden role="dialog" aria-modal="false" aria-labelledby="termPopoverTitle"><button class="term-popover-close" id="closeTermPopover" type="button" aria-label="Fechar definição"><svg class="ui-icon"><use href="#icon-close"></use></svg></button><span class="term-type" id="termPopoverCategory"></span><strong id="termPopoverTitle"></strong><p id="termPopoverDefinition"></p><button class="text-link term-open-full" id="termPopoverOpen" type="button">Ver no Glossário →</button></div>
 
   <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="false"></div>
 
-  <script src="content-data.js?v=40"></script>
-  <script src="app.js?v=42"></script>
+  <script src="content-data.js?v=46"></script>
+  <script src="app.js?v=46"></script>
+  <script src="platform-features.js?v=46"></script>
+  <script src="bootstrap.js?v=46"></script>
 </body>
 </html>

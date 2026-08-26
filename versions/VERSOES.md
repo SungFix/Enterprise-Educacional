@@ -1,0 +1,50 @@
+# Enterprise Educacional — histórico completo v1 a v46
+
+Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitável/funcional, ainda em evolução; **RELEASE** = marco completo/estável no histórico.
+
+- **v1 — RELEASE** — Base completa inicial com currículo amplo e recursos centrais.
+- **v2 — ALPHA** — Refinamento visual premium e hierarquia da interface.
+- **v3 — RELEASE** — Playground ampliado com Python/Pyodide e recursos de aula.
+- **v4 — ALPHA** — Editor/Playground reorganizado e branding refinado.
+- **v5 — ALPHA** — Branding adaptado ao Light Mode.
+- **v6 — BETA** — Ajuste de contraste do Light Mode; houve regressão importante de base.
+- **v7 — RELEASE** — Revisão/restauração da base completa com 823 aulas e recursos avançados.
+- **v8 — ALPHA** — Ícones/branding com variantes Dark e Light.
+- **v9 — ALPHA** — Seletor visual de modelos do Playground.
+- **v10 — ALPHA** — Transição animada entre temas.
+- **v11 — ALPHA** — Nova paleta clara neutra/greige.
+- **v12 — BETA** — Correção da animação Sol/Lua, mas a base usada ficou com layout quebrado.
+- **v13 — RELEASE** — Restauração do layout completo e correção da regressão da v12.
+- **v14 — ALPHA** — Recoloração do ícone claro para acompanhar a nova paleta.
+- **v15 — ALPHA** — Refino geral de UX, aulas, busca, trilhas e responsividade.
+- **v16 — ALPHA** — Python passa a usar terminal/console como resultado principal.
+- **v17 — BETA** — Glossário reorganizado, mas ainda com acesso horizontal incompleto.
+- **v18 — ALPHA** — Scroll horizontal do Glossário por barra, mouse e toque.
+- **v19 — ALPHA** — Polimento visual geral de Home, aulas, cards e temas.
+- **v20 — ALPHA** — Refino de mobile, hierarquia e consistência.
+- **v21 — ALPHA** — Espaçamento corrigido nas ações dos desafios.
+- **v22 — RELEASE** — Grande melhoria do sistema de exercícios e revisão de erros.
+- **v23 — RELEASE** — Revisão inteligente, prática rápida, domínio, checkpoints e recomendações.
+- **v24 — RELEASE** — Editor inteligente com autocomplete, diagnósticos, Quick Fix e atalhos.
+- **v25 — BETA** — Projetos salvos no Playground/IndexedDB; toolbar ficou visualmente quebrada.
+- **v26 — ALPHA** — Correção e reorganização da toolbar do Playground.
+- **v27 — ALPHA** — Abrir projeto salvo passa a limpar linguagens não incluídas.
+- **v28 — ALPHA** — Playground mais limpo, ações secundárias em menu Mais.
+- **v29 — ALPHA** — Presets Web passam a usar visual escuro por padrão.
+- **v30 — ALPHA** — Botão Play junto ao preview e console claro no Light Mode.
+- **v31 — ALPHA** — Remoção das setas redundantes no Glossário.
+- **v32 — BETA** — Conteúdo de aula mais explicativo; interface de notas ficou problemática.
+- **v33 — ALPHA** — Primeira correção visual de Minhas notas.
+- **v34 — BETA** — Refino do começo das aulas e notas; ainda havia bug de termos do Glossário no meio de palavras.
+- **v35 — ALPHA** — Correção dos links inline do Glossário para respeitar palavras completas.
+- **v36 — ALPHA** — Remoção de controles e métricas excessivas do topo das aulas.
+- **v37 — BETA** — Espaçamento do índice Nesta aula; depois foram encontrados vários problemas na área de notas.
+- **v38 — BETA** — Limpeza de notas e correção da geração standalone; ainda havia overflow horizontal na Home.
+- **v39 — ALPHA** — Correção da barra de rolagem horizontal da Home.
+- **v40 — RELEASE** — Backup/restauração, exportação/importação de projetos, mobile e limpeza técnica final.
+- **v41 — BETA** — Expansão com nuvem, PWA, correção automática, dashboard e CI; depois apareceu problema visual em Progresso.
+- **v42 — ALPHA** — Primeira correção/refino da área de Progresso.
+- **v43 — RELEASE** — Redesenho mais completo e estável da página de Progresso.
+- **v44 — BETA** — QA e novas melhorias amplas; apresentou falha nos ícones do HTML único.
+- **v45 — ALPHA** — Correção dos ícones/branding e compatibilidade dos SVGs internos.
+- **v46 — RELEASE** — Polimento geral de produto e versão mais completa do histórico até aqui.

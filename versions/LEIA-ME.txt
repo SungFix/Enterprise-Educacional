@@ -1,0 +1,8 @@
+Enterprise Educacional — versões v1 a v46
+
+Cada arquivo representa uma versão histórica do projeto.
+BETA    = versão com erro/regressão conhecida.
+ALPHA   = versão funcional/aceitável, ainda em evolução.
+RELEASE = marco mais completo/estável no histórico.
+
+Consulte VERSOES.md para o resumo de cada versão.
