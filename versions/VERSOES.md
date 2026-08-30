@@ -1,4 +1,4 @@
-# Epoch Education — histórico completo v1 a v50
+# Epoch Education — histórico completo v1 a v51
 
 Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitável/funcional, ainda em evolução; **RELEASE** = marco completo/estável no histórico.
 
@@ -52,3 +52,4 @@ Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitáve
 - **v48 — RELEASE** — Feedbacks anônimos com banco Supabase dedicado, RLS de inserção pública sem leitura, formulário responsivo no site, cache/PWA e standalone atualizados.
 - **v49 — RELEASE** — Alteração completa da identidade textual para Epoch Education, preservando EE + </>, dados, funcionalidades, compatibilidade de armazenamento, PWA e standalone; publicação final validada pela suíte de qualidade.
 - **v50 — RELEASE** — Correções da auditoria: fullscreen visual do Tkinter, fontes monoespaçadas, feedback via Edge Function com rate limit e bloqueio de INSERT público, Supabase v50 e republicação após renome do repositório; publicação final validada pela suíte de qualidade.
+- **v51 — RELEASE** — Standalone renomeado para `Epoch-Education.html`; o build oficial foi atualizado para gerar exclusivamente o arquivo com o nome atual da marca.

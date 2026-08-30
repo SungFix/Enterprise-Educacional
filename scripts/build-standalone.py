@@ -49,7 +49,7 @@ for filename, source in scripts:
         raise SystemExit(f'script tag not found: {filename}')
 
 # No remaining local stylesheet/script/image dependencies should be required to open the file.
-output = root / 'Enterprise-Educacional.html'
+output = root / 'Epoch-Education.html'
 output.write_text(html, encoding='utf-8')
 (root / 'index-standalone-preview.html').write_text(html, encoding='utf-8')
 print(output)
