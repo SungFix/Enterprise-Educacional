@@ -31,10 +31,11 @@ jobs:
           new = 'Epoch Education'
           text_ext = {'.html','.js','.css','.json','.webmanifest','.svg','.md','.txt','.sql','.py','.yml','.yaml'}
           special = {'.gitignore','.gitattributes'}
+          generated = {'Enterprise-Educacional.html','index-standalone-preview.html'}
 
           tracked = subprocess.check_output(['git','ls-files','-z']).decode().split('\0')
           for rel in tracked:
-              if not rel or rel in {'Enterprise-Educacional.html','index-standalone-preview.html'}:
+              if not rel or rel in generated:
                   continue
               p = root / rel
               if not p.is_file() or (p.suffix.lower() not in text_ext and p.name not in special):
@@ -47,7 +48,6 @@ jobs:
               if updated != text:
                   p.write_text(updated, encoding='utf-8')
 
-          # Versão pública v49 e cache-busting.
           for rel in ['index.html','app.js','platform-features.js','service-worker.js']:
               p = root / rel
               text = p.read_text(encoding='utf-8').replace('?v=48','?v=49')
@@ -60,7 +60,6 @@ jobs:
                   text = text.replace("'enterprise-educacional-runtime-v48'", "'epoch-education-runtime-v49'")
               p.write_text(text, encoding='utf-8')
 
-          # Nome curto do PWA e nome visível de novos backups.
           manifest = root / 'manifest.webmanifest'
           text = manifest.read_text(encoding='utf-8').replace('"short_name": "Enterprise"','"short_name": "Epoch"')
           manifest.write_text(text, encoding='utf-8')
@@ -69,7 +68,6 @@ jobs:
           text = app.read_text(encoding='utf-8').replace('`enterprise-educacional-backup-${date}.json`','`epoch-education-backup-${date}.json`')
           app.write_text(text, encoding='utf-8')
 
-          # Standalone e validação passam a refletir a v49.
           build = root / 'scripts' / 'build-standalone.py'
           text = build.read_text(encoding='utf-8').replace('data-build="48"','data-build="49"')
           build.write_text(text, encoding='utf-8')
@@ -105,10 +103,9 @@ jobs:
                   text = text.rstrip() + '\n' + line + '\n'
               versions.write_text(text, encoding='utf-8')
 
-          # Auditoria final da árvore textual: a expressão antiga não pode permanecer.
           leftovers = []
           for rel in tracked:
-              if not rel:
+              if not rel or rel in generated:
                   continue
               p = root / rel
               if not p.is_file() or (p.suffix.lower() not in text_ext and p.name not in special):
