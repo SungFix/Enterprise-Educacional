@@ -1,4 +1,4 @@
-/* Enterprise Educacional — platform features v47
+/* Enterprise Educacional — platform features v48
  * Cloud sync, PWA install/offline, project checks, study history and recovery.
  */
 
@@ -131,7 +131,7 @@ async function buildEnterpriseBackupPayload(savedProjectsOverride) {
     format:'enterprise-educacional-backup',
     version:2,
     exportedAt:new Date().toISOString(),
-    appVersion:47,
+    appVersion:48,
     state:JSON.parse(JSON.stringify(state)),
     savedProjects
   };
@@ -322,7 +322,7 @@ async function initPwaFeature() {
     eeDeferredInstallPrompt = null; renderPwaStatus();
   });
   if ('serviceWorker' in navigator && document.documentElement.dataset.standaloneFile !== 'true' && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./service-worker.js?v=47').catch(() => {});
+    navigator.serviceWorker.register('./service-worker.js?v=48').catch(() => {});
   }
   renderPwaStatus();
 }
@@ -506,8 +506,85 @@ function initPlaygroundRecoveryFeature() {
   window.addEventListener('pagehide', savePlaygroundRecoveryDraft);
 }
 
+const EE_FEEDBACK_PROJECT_URL = 'https://xqlbuatjounkpovwggdj.supabase.co';
+const EE_FEEDBACK_PUBLIC_KEY = 'sb_publishable_03cXMvbU2fQEqkZ-Z7xI_g_Ji97Txy_';
+const EE_FEEDBACK_COOLDOWN_KEY = 'enterprise-educacional-feedback-last-v1';
+
+function eeSetFeedbackStatus(message = '', kind = '') {
+  const node = $('#feedbackStatus');
+  if (!node) return;
+  node.hidden = !message;
+  node.textContent = message;
+  node.dataset.kind = kind;
+}
+function eeUpdateFeedbackCounter() {
+  const text = $('#feedbackText')?.value || '';
+  const counter = $('#feedbackCounter');
+  if (counter) counter.textContent = String(text.length);
+}
+function openFeedbackDialog() {
+  const dialog = $('#feedbackDialog');
+  const form = $('#feedbackForm');
+  if (!dialog || !form) return;
+  form.reset();
+  eeSetFeedbackStatus('');
+  eeUpdateFeedbackCounter();
+  if (!dialog.open) dialog.showModal();
+  setTimeout(() => $('#feedbackText')?.focus(), 60);
+}
+async function eeSubmitFeedback(event) {
+  event.preventDefault();
+  const form = $('#feedbackForm');
+  const button = $('#submitFeedback');
+  const message = String($('#feedbackText')?.value || '').trim();
+  const category = String($('#feedbackCategory')?.value || 'geral');
+  const ratingRaw = String($('#feedbackRating')?.value || '');
+  const honeypot = String($('#feedbackWebsite')?.value || '').trim();
+  const categories = new Set(['geral','conteudo','playground','bug','visual','sugestao']);
+  if (honeypot) { form?.reset(); $('#feedbackDialog')?.close(); return; }
+  if (!categories.has(category)) { eeSetFeedbackStatus('Escolha um tipo de feedback válido.', 'error'); return; }
+  if (message.length < 5 || message.length > 2000) { eeSetFeedbackStatus('Escreva entre 5 e 2000 caracteres.', 'error'); return; }
+  const rating = ratingRaw ? Number(ratingRaw) : null;
+  if (rating !== null && (!Number.isInteger(rating) || rating < 1 || rating > 5)) { eeSetFeedbackStatus('Escolha uma avaliação válida.', 'error'); return; }
+  const lastSent = Number(localStorage.getItem(EE_FEEDBACK_COOLDOWN_KEY) || 0);
+  if (lastSent && Date.now() - lastSent < 15000) { eeSetFeedbackStatus('Aguarde alguns segundos antes de enviar outro feedback.', 'warning'); return; }
+  if (button) { button.disabled = true; button.textContent = 'Enviando…'; }
+  eeSetFeedbackStatus('Enviando feedback…');
+  try {
+    const response = await fetch(`${EE_FEEDBACK_PROJECT_URL}/rest/v1/ee_feedback`, {
+      method:'POST',
+      headers:{ 'apikey':EE_FEEDBACK_PUBLIC_KEY, 'Content-Type':'application/json', 'Prefer':'return=minimal' },
+      body:JSON.stringify({ category, rating, message, page:String(location.hash || '#home').slice(0,200), app_version:48 })
+    });
+    if (!response.ok) {
+      const detail = await response.text().catch(() => '');
+      throw new Error(detail || `Erro HTTP ${response.status}`);
+    }
+    localStorage.setItem(EE_FEEDBACK_COOLDOWN_KEY, String(Date.now()));
+    form?.reset();
+    eeUpdateFeedbackCounter();
+    eeSetFeedbackStatus('Obrigado! Seu feedback foi enviado.', 'success');
+    if (typeof showToast === 'function') showToast('Feedback enviado. Obrigado!');
+    setTimeout(() => $('#feedbackDialog')?.close(), 900);
+  } catch (error) {
+    console.error('Falha ao enviar feedback:', error);
+    eeSetFeedbackStatus(navigator.onLine === false ? 'Você está offline. Conecte-se à internet e tente novamente.' : 'Não foi possível enviar agora. Tente novamente em instantes.', 'error');
+  } finally {
+    if (button) { button.disabled = false; button.textContent = 'Enviar feedback'; }
+  }
+}
+function initFeedbackFeature() {
+  $('#openFeedback')?.addEventListener('click', openFeedbackDialog);
+  $('#closeFeedback')?.addEventListener('click', () => $('#feedbackDialog')?.close());
+  $('#cancelFeedback')?.addEventListener('click', () => $('#feedbackDialog')?.close());
+  $('#feedbackText')?.addEventListener('input', eeUpdateFeedbackCounter);
+  $('#feedbackForm')?.addEventListener('submit', eeSubmitFeedback);
+  $('#feedbackDialog')?.addEventListener('click', event => { if (event.target === $('#feedbackDialog')) $('#feedbackDialog').close(); });
+}
+
 function initPlatformFeatures() {
   initCloudSyncFeature();
+  initFeedbackFeature();
   initPwaFeature();
   initProjectVerifierFeature();
   initPlaygroundRecoveryFeature();

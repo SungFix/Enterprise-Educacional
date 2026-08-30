@@ -86,7 +86,7 @@ if (!manifest.name || !manifest.start_url || !Array.isArray(manifest.icons) || m
 else ok('Manifest PWA verificado');
 
 const versionSources = [html, read('app.js'), read('platform-features.js'), read('bootstrap.js'), read('service-worker.js')].join('\n');
-const staleVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1])).filter(version => version < 47);
+const staleVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1])).filter(version => version < 48);
 if (staleVersionRefs.length) fail(`Referências de cache antigas nos arquivos públicos: ${[...new Set(staleVersionRefs)].join(', ')}`); else ok('Referências de cache dos arquivos públicos atualizadas');
 
 for (const breakpoint of ['375px','390px','430px','760px','900px']) if (!css.includes(`max-width:${breakpoint}`) && !css.includes(`max-width: ${breakpoint}`)) fail(`Breakpoint responsivo ausente: ${breakpoint}`);
@@ -103,8 +103,9 @@ const platformSource = read('platform-features.js');
 const workerSource = read('service-worker.js');
 const schemaSource = fs.existsSync(path.join(root,'supabase/schema.sql')) ? read('supabase/schema.sql') : '';
 
-if (css.lastIndexOf('Quality consolidation v47') < css.lastIndexOf('Product polish v46')) fail('Camada final de CSS v47 não é a autoridade mais recente');
-else ok('Autoridade CSS v47 consolidada');
+if (css.lastIndexOf('Quality consolidation v47') < css.lastIndexOf('Product polish v46')) fail('Camada final de CSS v47 não preservada');
+else if (css.lastIndexOf('Feedback integration v48') < css.lastIndexOf('Quality consolidation v47')) fail('Camada final de CSS v48 não é a autoridade mais recente');
+else ok('Autoridade CSS v48 consolidada');
 if (data) {
   const tipCounts = new Map();
   for (const lesson of data.lessons || []) { const tip=String(lesson.tip || '').trim(); if (tip) tipCounts.set(tip,(tipCounts.get(tip)||0)+1); }
@@ -122,12 +123,22 @@ if (!appSource.includes("'#f5efe6'")) fail('theme-color claro não acompanha a p
 else ok('Theme color Light Mode alinhado');
 if (!appSource.includes("event?.type === 'hashchange'") || !appSource.includes("heading.focus({ preventScroll:true })")) fail('Foco de navegação SPA não tratado');
 else ok('Foco de navegação SPA verificado');
-if (!/appVersion\s*:\s*47/.test(platformSource)) fail('Versão de backup não atualizada para v47');
+if (!/appVersion\s*:\s*48/.test(platformSource)) fail('Versão de backup não atualizada para v48');
 else ok('Versão de backup atualizada');
 if (!workerSource.includes("request.mode === 'navigate'") || /catch\(\(\) => caches\.match\('\.\/index\.html'\)\)/.test(workerSource)) fail('Fallback offline do Service Worker ainda pode devolver HTML para assets');
 else ok('Fallback PWA separado entre navegação e assets');
 for (const asset of ['favicon-light-16.png','favicon-light-32.png','apple-touch-icon-light.png']) if (!workerSource.includes(asset)) fail(`Asset Light Mode ausente do cache PWA: ${asset}`);
 if (schemaSource && !schemaSource.includes('drop policy if exists "ee_user_data_select_own"')) fail('schema.sql não é idempotente para policies');
 else if (schemaSource) ok('Policies Supabase idempotentes');
+
+const feedbackSchemaPath = path.join(root,'supabase/feedback-schema.sql');
+const feedbackSchemaSource = fs.existsSync(feedbackSchemaPath) ? read('supabase/feedback-schema.sql') : '';
+if (!html.includes('id="feedbackDialog"') || !html.includes('id="openFeedback"') || !html.includes('id="feedbackForm"')) fail('Interface de feedback ausente');
+else ok('Interface de feedback presente');
+if (!platformSource.includes('EE_FEEDBACK_PROJECT_URL') || !platformSource.includes('sb_publishable_') || !platformSource.includes('/rest/v1/ee_feedback')) fail('Integração pública de feedback incompleta');
+else if (/sb_secret_|service_role\s*=|service_role['"]\s*:/i.test(platformSource)) fail('Credencial privilegiada encontrada na integração de feedback');
+else ok('Integração de feedback usa apenas chave publicável');
+if (!feedbackSchemaSource.includes('enable row level security') || !feedbackSchemaSource.includes('grant insert') || !feedbackSchemaSource.includes('revoke all')) fail('Schema de feedback sem proteção RLS/grants mínimos');
+else ok('Schema de feedback protegido por RLS e privilégio mínimo');
 
 if (process.exitCode) process.exit(process.exitCode);
