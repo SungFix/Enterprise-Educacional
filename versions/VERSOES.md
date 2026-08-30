@@ -1,4 +1,4 @@
-# Enterprise Educacional — histórico completo v1 a v47
+# Enterprise Educacional — histórico completo v1 a v48
 
 Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitável/funcional, ainda em evolução; **RELEASE** = marco completo/estável no histórico.
 
@@ -49,3 +49,4 @@ Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitáve
 - **v45 — ALPHA** — Correção dos ícones/branding e compatibilidade dos SVGs internos.
 - **v46 — RELEASE** — Polimento geral de produto e versão mais completa do histórico até aqui.
 - **v47 — RELEASE** — Auditoria geral: restauração do Tkinter Web Lite no Playground Python, refinamento de acessibilidade, mobile e Light Mode, correções de PWA e Supabase, com standalone e validações atualizados.
+- **v48 — RELEASE** — Feedbacks anônimos com banco Supabase dedicado, RLS de inserção pública sem leitura, formulário responsivo no site, cache/PWA e standalone atualizados.
