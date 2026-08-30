@@ -86,7 +86,7 @@ if (!manifest.name || !manifest.start_url || !Array.isArray(manifest.icons) || m
 else ok('Manifest PWA verificado');
 
 const versionSources = [html, read('app.js'), read('platform-features.js'), read('bootstrap.js'), read('service-worker.js')].join('\n');
-const staleVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1])).filter(version => version < 48);
+const staleVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1])).filter(version => version < 49);
 if (staleVersionRefs.length) fail(`Referências de cache antigas nos arquivos públicos: ${[...new Set(staleVersionRefs)].join(', ')}`); else ok('Referências de cache dos arquivos públicos atualizadas');
 
 for (const breakpoint of ['375px','390px','430px','760px','900px']) if (!css.includes(`max-width:${breakpoint}`) && !css.includes(`max-width: ${breakpoint}`)) fail(`Breakpoint responsivo ausente: ${breakpoint}`);
@@ -123,7 +123,7 @@ if (!appSource.includes("'#f5efe6'")) fail('theme-color claro não acompanha a p
 else ok('Theme color Light Mode alinhado');
 if (!appSource.includes("event?.type === 'hashchange'") || !appSource.includes("heading.focus({ preventScroll:true })")) fail('Foco de navegação SPA não tratado');
 else ok('Foco de navegação SPA verificado');
-if (!/appVersion\s*:\s*48/.test(platformSource)) fail('Versão de backup não atualizada para v48');
+if (!/appVersion\s*:\s*49/.test(platformSource)) fail('Versão de backup não atualizada para v49');
 else ok('Versão de backup atualizada');
 if (!workerSource.includes("request.mode === 'navigate'") || /catch\(\(\) => caches\.match\('\.\/index\.html'\)\)/.test(workerSource)) fail('Fallback offline do Service Worker ainda pode devolver HTML para assets');
 else ok('Fallback PWA separado entre navegação e assets');
@@ -140,5 +140,13 @@ else if (/sb_secret_|service_role\s*=|service_role['"]\s*:/i.test(platformSource
 else ok('Integração de feedback usa apenas chave publicável');
 if (!feedbackSchemaSource.includes('enable row level security') || !feedbackSchemaSource.includes('grant insert') || !feedbackSchemaSource.includes('revoke all')) fail('Schema de feedback sem proteção RLS/grants mínimos');
 else ok('Schema de feedback protegido por RLS e privilégio mínimo');
+
+
+const legacyBrand = 'Enterprise' + ' Educacional';
+for (const file of ['index.html','app.js','platform-features.js','content-data.js','manifest.webmanifest','assets/branding/enterprise-logo-horizontal.svg','assets/branding/enterprise-symbol.svg']) {
+  if (read(file).includes(legacyBrand)) fail(`Marca antiga ainda presente em ${file}`);
+}
+if (manifest.name !== 'Epoch Education' || manifest.short_name !== 'Epoch') fail('Manifest PWA não usa Epoch Education/Epoch');
+else ok('Marca Epoch Education verificada nos arquivos públicos');
 
 if (process.exitCode) process.exit(process.exitCode);

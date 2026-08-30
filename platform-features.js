@@ -1,4 +1,4 @@
-/* Enterprise Educacional — platform features v48
+/* Epoch Education — platform features v49
  * Cloud sync, PWA install/offline, project checks, study history and recovery.
  */
 
@@ -131,7 +131,7 @@ async function buildEnterpriseBackupPayload(savedProjectsOverride) {
     format:'enterprise-educacional-backup',
     version:2,
     exportedAt:new Date().toISOString(),
-    appVersion:48,
+    appVersion:49,
     state:JSON.parse(JSON.stringify(state)),
     savedProjects
   };
@@ -313,7 +313,7 @@ function renderPwaStatus() {
 }
 async function initPwaFeature() {
   window.addEventListener('beforeinstallprompt', event => { event.preventDefault(); eeDeferredInstallPrompt = event; renderPwaStatus(); });
-  window.addEventListener('appinstalled', () => { eeDeferredInstallPrompt = null; renderPwaStatus(); showToast('Enterprise Educacional instalado.'); });
+  window.addEventListener('appinstalled', () => { eeDeferredInstallPrompt = null; renderPwaStatus(); showToast('Epoch Education instalado.'); });
   window.addEventListener('online', renderPwaStatus); window.addEventListener('offline', renderPwaStatus);
   $('#installPwaButton')?.addEventListener('click', async () => {
     if (!eeDeferredInstallPrompt) return;
@@ -322,7 +322,7 @@ async function initPwaFeature() {
     eeDeferredInstallPrompt = null; renderPwaStatus();
   });
   if ('serviceWorker' in navigator && document.documentElement.dataset.standaloneFile !== 'true' && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./service-worker.js?v=48').catch(() => {});
+    navigator.serviceWorker.register('./service-worker.js?v=49').catch(() => {});
   }
   renderPwaStatus();
 }
@@ -554,7 +554,7 @@ async function eeSubmitFeedback(event) {
     const response = await fetch(`${EE_FEEDBACK_PROJECT_URL}/rest/v1/ee_feedback`, {
       method:'POST',
       headers:{ 'apikey':EE_FEEDBACK_PUBLIC_KEY, 'Content-Type':'application/json', 'Prefer':'return=minimal' },
-      body:JSON.stringify({ category, rating, message, page:String(location.hash || '#home').slice(0,200), app_version:48 })
+      body:JSON.stringify({ category, rating, message, page:String(location.hash || '#home').slice(0,200), app_version:49 })
     });
     if (!response.ok) {
       const detail = await response.text().catch(() => '');

@@ -1,4 +1,4 @@
-# Enterprise Educacional
+# Epoch Education
 
 Plataforma educacional estática, responsiva e interativa para aprender desenvolvimento e programação com aulas extensas, exemplos, exercícios, desafios, projetos, progresso local, Glossário, Busca e Playground HTML/CSS/JavaScript/Python.
 

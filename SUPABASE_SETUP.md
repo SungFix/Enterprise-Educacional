@@ -1,6 +1,6 @@
 # Sincronização em nuvem (opcional)
 
-O Enterprise Educacional continua funcionando sem conta. A nuvem só é ativada quando o proprietário conecta um projeto Supabase.
+O Epoch Education continua funcionando sem conta. A nuvem só é ativada quando o proprietário conecta um projeto Supabase.
 
 1. Crie um projeto no Supabase.
 2. Abra o SQL Editor e execute `supabase/schema.sql`.

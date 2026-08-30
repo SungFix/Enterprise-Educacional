@@ -1,4 +1,4 @@
--- Enterprise Educacional — banco dedicado de feedbacks
+-- Epoch Education — banco dedicado de feedbacks
 -- Use em um projeto Supabase separado do backend de sincronização de usuários.
 
 create table if not exists public.ee_feedback (
@@ -7,7 +7,7 @@ create table if not exists public.ee_feedback (
   rating smallint check (rating between 1 and 5),
   message text not null check (char_length(trim(message)) between 5 and 2000),
   page text not null default '' check (char_length(page) <= 200),
-  app_version integer not null default 48 check (app_version between 1 and 9999),
+  app_version integer not null default 49 check (app_version between 1 and 9999),
   created_at timestamptz not null default now()
 );
 alter table public.ee_feedback enable row level security;
@@ -24,4 +24,4 @@ with check (
   and app_version between 1 and 9999
 );
 create index if not exists ee_feedback_created_at_idx on public.ee_feedback (created_at desc);
-comment on table public.ee_feedback is 'Feedbacks anonimos enviados pelo site Enterprise Educacional.';
+comment on table public.ee_feedback is 'Feedbacks anonimos enviados pelo site Epoch Education.';

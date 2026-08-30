@@ -1,4 +1,4 @@
-# Auditoria de conteúdo — Enterprise Educacional
+# Auditoria de conteúdo — Epoch Education
 
 - Aulas auditadas: **823**
 - Trilhas: **4**

@@ -1,4 +1,4 @@
--- Enterprise Educacional — sincronização opcional em nuvem
+-- Epoch Education — sincronização opcional em nuvem
 -- Execute no SQL Editor do seu projeto Supabase.
 
 create table if not exists public.ee_user_data (

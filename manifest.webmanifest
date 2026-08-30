@@ -1,6 +1,6 @@
 {
-  "name": "Enterprise Educacional",
-  "short_name": "Enterprise",
+  "name": "Epoch Education",
+  "short_name": "Epoch",
   "description": "Aprenda HTML, CSS, JavaScript e Python com aulas, exercícios, projetos e Playground.",
   "start_url": "./index.html",
   "scope": "./",

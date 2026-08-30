@@ -29,7 +29,7 @@ function contextualizeRepeatedLessonTips(items) {
 contextualizeRepeatedLessonTips(lessons);
 
 const defaultPlayground = {
-  html: `<main class="card">\n  <span class="tag">Enterprise Educacional</span>\n  <h1>Seu código, seu resultado.</h1>\n  <p>Edite este exemplo e clique em Executar.</p>\n  <button id="action">Testar JavaScript</button>\n</main>`,
+  html: `<main class="card">\n  <span class="tag">Epoch Education</span>\n  <h1>Seu código, seu resultado.</h1>\n  <p>Edite este exemplo e clique em Executar.</p>\n  <button id="action">Testar JavaScript</button>\n</main>`,
   css: `:root { color-scheme: dark; }\n* { box-sizing: border-box; }\nbody {\n  margin: 0;\n  min-height: 100vh;\n  display: grid;\n  place-items: center;\n  padding: 32px;\n  font-family: system-ui, sans-serif;\n  background: #0b0d0f;\n  color: #f3f5f7;\n}\n.card {\n  width: min(520px, 86vw);\n  padding: 32px;\n  border: 1px solid #2b3138;\n  border-radius: 18px;\n  background: #12161a;\n  box-shadow: 0 18px 46px rgba(0,0,0,.32);\n}\n.tag { font-size: 12px; color: #9aa3ad; }\nh1 { color: #f7f8f9; }\np { color: #c2c8cf; }\nbutton {\n  padding: 10px 14px;\n  border: 1px solid #dfe3e7;\n  border-radius: 9px;\n  background: #eef1f4;\n  color: #111417;\n  font: inherit;\n  font-weight: 650;\n  cursor: pointer;\n}\nbutton:hover { background: #ffffff; }`,
   js: `document.querySelector('#action').addEventListener('click', () => {\n  document.querySelector('h1').textContent = 'Funcionou!';\n  console.log('Evento executado com sucesso.');\n});`,
   python: `# Python 3 — executado no navegador com Pyodide\nnome = "Marina"\nprogresso = ["entender", "praticar", "construir"]\n\nprint(f"Olá, {nome}!")\nfor etapa, valor in enumerate(progresso, start=1):\n    print(f"{etapa}. {valor.capitalize()}")\n\nmedia = sum([8.5, 9.0, 10.0]) / 3\nprint(f"Média: {media:.1f}")`
@@ -397,8 +397,8 @@ function bindLearningMechanicActions() {
 
 function updateDocumentMeta(pageName, detail = '') {
   const titles = {
-    home: 'Enterprise Educacional', trilhas: 'Trilhas | Enterprise Educacional', aula: detail ? `${detail} | Enterprise Educacional` : 'Aula | Enterprise Educacional',
-    exercicios: 'Exercícios | Enterprise Educacional', desafios: 'Desafios | Enterprise Educacional', projetos: 'Projetos | Enterprise Educacional', playground: 'Playground | Enterprise Educacional', glossario: 'Glossário | Enterprise Educacional', progresso: 'Progresso | Enterprise Educacional', 'not-found':'Página não encontrada | Enterprise Educacional'
+    home: 'Epoch Education', trilhas: 'Trilhas | Epoch Education', aula: detail ? `${detail} | Epoch Education` : 'Aula | Epoch Education',
+    exercicios: 'Exercícios | Epoch Education', desafios: 'Desafios | Epoch Education', projetos: 'Projetos | Epoch Education', playground: 'Playground | Epoch Education', glossario: 'Glossário | Epoch Education', progresso: 'Progresso | Epoch Education', 'not-found':'Página não encontrada | Epoch Education'
   };
   document.title = titles[pageName] || titles.home;
 }
@@ -1814,7 +1814,7 @@ async function exportEnterpriseBackup() {
     const savedProjects = await listSavedCodeProjects();
     const payload = typeof buildEnterpriseBackupPayload === 'function' ? await buildEnterpriseBackupPayload(savedProjects) : { format:'enterprise-educacional-backup', version:2, exportedAt:new Date().toISOString(), state, savedProjects };
     const date = new Date().toISOString().slice(0,10);
-    downloadBlob(new Blob([JSON.stringify(payload,null,2)], {type:'application/json'}), `enterprise-educacional-backup-${date}.json`);
+    downloadBlob(new Blob([JSON.stringify(payload,null,2)], {type:'application/json'}), `epoch-education-backup-${date}.json`);
     showToast('Backup completo baixado.');
   } catch { showToast('Não foi possível gerar o backup.'); }
 }
@@ -1822,7 +1822,7 @@ async function restoreEnterpriseBackup(file) {
   if (!file) return;
   try {
     const payload = JSON.parse(await file.text());
-    if (payload?.format !== 'enterprise-educacional-backup' || !payload.state || typeof payload.state !== 'object') throw new Error('Este arquivo não é um backup válido do Enterprise Educacional.');
+    if (payload?.format !== 'enterprise-educacional-backup' || !payload.state || typeof payload.state !== 'object') throw new Error('Este arquivo não é um backup válido do Epoch Education.');
     if (!confirm('Restaurar este backup? O progresso, notas, histórico e projetos salvos atuais deste navegador serão substituídos.')) return;
     localStorage.setItem(storageKey, JSON.stringify(payload.state));
     localStorage.removeItem(legacyStorageKey);
@@ -4235,7 +4235,7 @@ function renderCourseCertificatePreview(course) {
   const host = $('#certificatePreview'); if (!host || !course) return;
   const name = ($('#certificateName')?.value || state.certificateName || 'Estudante').trim() || 'Estudante';
   const date = new Intl.DateTimeFormat('pt-BR',{dateStyle:'long'}).format(new Date());
-  host.innerHTML = `<div class="certificate-mark">EE <span>&lt;/&gt;</span></div><span class="certificate-kicker">CERTIFICADO DE CONCLUSÃO</span><h2>${escapeHtml(course.title)}</h2><p>Certificamos que</p><strong class="certificate-student">${escapeHtml(name)}</strong><p>concluiu a trilha de <b>${escapeHtml(course.title)}</b> no Enterprise Educacional, incluindo aulas, prática, checkpoints e projeto aplicado.</p><div class="certificate-meta"><span>${getCourseLessons(course.id).length} aulas</span><span>${course.modules.length} módulos</span><span>${escapeHtml(date)}</span></div>`;
+  host.innerHTML = `<div class="certificate-mark">EE <span>&lt;/&gt;</span></div><span class="certificate-kicker">CERTIFICADO DE CONCLUSÃO</span><h2>${escapeHtml(course.title)}</h2><p>Certificamos que</p><strong class="certificate-student">${escapeHtml(name)}</strong><p>concluiu a trilha de <b>${escapeHtml(course.title)}</b> no Epoch Education, incluindo aulas, prática, checkpoints e projeto aplicado.</p><div class="certificate-meta"><span>${getCourseLessons(course.id).length} aulas</span><span>${course.modules.length} módulos</span><span>${escapeHtml(date)}</span></div>`;
 }
 
 function initCertificateFeature() {

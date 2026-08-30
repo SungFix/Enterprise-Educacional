@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 64" role="img" aria-labelledby="title desc">
-  <title id="title">Enterprise Educacional</title>
-  <desc id="desc">Marca horizontal do Enterprise Educacional</desc>
+  <title id="title">Epoch Education</title>
+  <desc id="desc">Marca horizontal do Epoch Education</desc>
   <g transform="translate(4 8)">
     <rect x="1" y="1" width="46" height="46" rx="13" fill="#111316" stroke="#3b4148" stroke-width="2"/>
     <path d="M12.5 14.5h12M12.5 24h9.5M12.5 33.5h12M12.5 14.5v19" fill="none" stroke="#f2f3f3" stroke-width="3" stroke-linecap="round"/>
     <path d="M35.5 14.5h-7.5M35.5 24h-6M35.5 33.5h-7.5M35.5 14.5v19" fill="none" stroke="#a9afb6" stroke-width="3" stroke-linecap="round"/>
     <path d="M27.7 12.5 20.4 35.5" fill="none" stroke="#727981" stroke-width="2.4" stroke-linecap="round"/>
   </g>
-  <text x="66" y="31" fill="#f4f4f5" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="760" letter-spacing="-0.6">Enterprise Educacional</text>
+  <text x="66" y="31" fill="#f4f4f5" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="20" font-weight="760" letter-spacing="-0.6">Epoch Education</text>
   <text x="67" y="48" fill="#8f959c" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="9.5" font-weight="700" letter-spacing="1.8">APRENDER · PRATICAR · CONSTRUIR</text>
 </svg>
