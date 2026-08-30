@@ -50,4 +50,4 @@ Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitáve
 - **v46 — RELEASE** — Polimento geral de produto e versão mais completa do histórico até aqui.
 - **v47 — RELEASE** — Auditoria geral: restauração do Tkinter Web Lite no Playground Python, refinamento de acessibilidade, mobile e Light Mode, correções de PWA e Supabase, com standalone e validações atualizados.
 - **v48 — RELEASE** — Feedbacks anônimos com banco Supabase dedicado, RLS de inserção pública sem leitura, formulário responsivo no site, cache/PWA e standalone atualizados.
-- **v49 — RELEASE** — Alteração completa da identidade textual para Epoch Education, preservando EE + </>, dados, funcionalidades, compatibilidade de armazenamento, PWA e standalone.
+- **v49 — RELEASE** — Alteração completa da identidade textual para Epoch Education, preservando EE + </>, dados, funcionalidades, compatibilidade de armazenamento, PWA e standalone; publicação final validada pela suíte de qualidade.
