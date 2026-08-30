@@ -10,7 +10,7 @@ platform = (root / 'platform-features.js').read_text(encoding='utf-8')
 bootstrap = (root / 'bootstrap.js').read_text(encoding='utf-8')
 
 # Mark standalone mode so service-worker/PWA code knows not to register local files.
-html = re.sub(r'<html lang="pt-BR" data-theme="dark"[^>]*>', '<html lang="pt-BR" data-theme="dark" data-standalone-file="true" data-build="46">', html, count=1)
+html = re.sub(r'<html lang="pt-BR" data-theme="dark"[^>]*>', '<html lang="pt-BR" data-theme="dark" data-standalone-file="true" data-build="47">', html, count=1)
 
 # Convert all branding images referenced by the document (including paths inside inline theme bootstrap scripts) to data URIs.
 branding = root / 'assets' / 'branding'
@@ -30,7 +30,7 @@ for path in branding.iterdir():
 # Standalone files cannot install a PWA manifest from a sibling file.
 html = re.sub(r'\s*<link rel="manifest"[^>]*>\s*', '\n', html, count=1)
 
-style_link = re.compile(r'<link rel="stylesheet" href="styles\.css\?v=46"\s*/?>')
+style_link = re.compile(r'<link rel="stylesheet" href="styles\.css\?v=\d+"\s*/?>')
 html, count = style_link.subn('<style>\n' + css + '\n</style>', html, count=1)
 if count != 1:
     raise SystemExit('stylesheet link not found')
@@ -42,7 +42,7 @@ scripts = [
     ('bootstrap.js', bootstrap),
 ]
 for filename, source in scripts:
-    pattern = re.compile(rf'<script src="{re.escape(filename)}\?v=46"></script>')
+    pattern = re.compile(rf'<script src="{re.escape(filename)}\?v=\d+"></script>')
     replacement = '<script>\n' + source.replace('</script>', '<\\/script>') + '\n</script>'
     html, count = pattern.subn(lambda m, r=replacement: r, html, count=1)
     if count != 1:

@@ -15,12 +15,14 @@
           ? saved.theme
           : (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
         document.documentElement.dataset.theme = theme;
+        const meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.content = theme === 'light' ? '#f5efe6' : '#08090a';
       } catch {}
     })();
   </script>
-  <link id="favicon32" rel="icon" type="image/png" sizes="32x32" href="assets/branding/favicon-32.png?v=46" data-dark-href="assets/branding/favicon-32.png?v=46" data-light-href="assets/branding/favicon-light-32.png?v=46" />
-  <link id="favicon16" rel="icon" type="image/png" sizes="16x16" href="assets/branding/favicon-16.png?v=46" data-dark-href="assets/branding/favicon-16.png?v=46" data-light-href="assets/branding/favicon-light-16.png?v=46" />
-  <link id="appleTouchIcon" rel="apple-touch-icon" sizes="180x180" href="assets/branding/apple-touch-icon.png?v=46" data-dark-href="assets/branding/apple-touch-icon.png?v=46" data-light-href="assets/branding/apple-touch-icon-light.png?v=46" />
+  <link id="favicon32" rel="icon" type="image/png" sizes="32x32" href="assets/branding/favicon-32.png?v=47" data-dark-href="assets/branding/favicon-32.png?v=47" data-light-href="assets/branding/favicon-light-32.png?v=47" />
+  <link id="favicon16" rel="icon" type="image/png" sizes="16x16" href="assets/branding/favicon-16.png?v=47" data-dark-href="assets/branding/favicon-16.png?v=47" data-light-href="assets/branding/favicon-light-16.png?v=47" />
+  <link id="appleTouchIcon" rel="apple-touch-icon" sizes="180x180" href="assets/branding/apple-touch-icon.png?v=47" data-dark-href="assets/branding/apple-touch-icon.png?v=47" data-light-href="assets/branding/apple-touch-icon-light.png?v=47" />
   <script>
     (() => {
       const theme = document.documentElement.dataset.theme;
@@ -30,19 +32,18 @@
         if (el) el.href = isLight ? lightHref : darkHref;
       };
       setTimeout(() => {
-        setHref('favicon32', 'assets/branding/favicon-32.png?v=46', 'assets/branding/favicon-light-32.png?v=46');
-        setHref('favicon16', 'assets/branding/favicon-16.png?v=46', 'assets/branding/favicon-light-16.png?v=46');
-        setHref('appleTouchIcon', 'assets/branding/apple-touch-icon.png?v=46', 'assets/branding/apple-touch-icon-light.png?v=46');
+        setHref('favicon32', 'assets/branding/favicon-32.png?v=47', 'assets/branding/favicon-light-32.png?v=47');
+        setHref('favicon16', 'assets/branding/favicon-16.png?v=47', 'assets/branding/favicon-light-16.png?v=47');
+        setHref('appleTouchIcon', 'assets/branding/apple-touch-icon.png?v=47', 'assets/branding/apple-touch-icon-light.png?v=47');
       }, 0);
     })();
   </script>
-  <link rel="manifest" href="manifest.webmanifest?v=46" />
+  <link rel="manifest" href="manifest.webmanifest?v=47" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="stylesheet" href="styles.css?v=46" />
+  <link rel="stylesheet" href="styles.css?v=47" />
 </head>
 <body>
-  <a class="skip-link" href="#mainContent">Pular para o conteúdo principal</a>
   <svg class="icon-sprite" aria-hidden="true" focusable="false">
     <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.25 4.25"/></symbol>
     <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.75"/><path d="M12 2.75v2.1M12 19.15v2.1M2.75 12h2.1M19.15 12h2.1M5.46 5.46l1.48 1.48M17.06 17.06l1.48 1.48M18.54 5.46l-1.48 1.48M6.94 17.06l-1.48 1.48"/></symbol>
@@ -88,7 +89,7 @@
   <header class="site-header" id="siteHeader">
     <div class="shell header-inner">
       <a class="brand" href="#home" aria-label="Enterprise Educacional — início">
-        <span class="brand-mark" aria-hidden="true"><img class="brand-symbol" src="assets/branding/enterprise-symbol.png?v=46" data-dark-src="assets/branding/enterprise-symbol.png?v=46" data-light-src="assets/branding/enterprise-symbol-light.png?v=46" alt="" /></span>
+        <span class="brand-mark" aria-hidden="true"><img class="brand-symbol" src="assets/branding/enterprise-symbol.png?v=47" data-dark-src="assets/branding/enterprise-symbol.png?v=47" data-light-src="assets/branding/enterprise-symbol-light.png?v=47" alt="" /></span>
         <span class="brand-name">Enterprise Educacional</span>
       </a>
 
@@ -227,7 +228,7 @@
           <div class="workbench-resizer" id="workbenchResizer" role="separator" aria-orientation="vertical" aria-label="Redimensionar editor e resultado" tabindex="0"></div>
           <section class="preview-pane">
             <div class="pane-head preview-pane-head"><div class="preview-heading"><strong id="previewTitle">Resultado</strong><span class="runtime-badge" id="runtimeBadge">Web sandbox</span></div><div class="preview-tools"><button class="preview-action" id="clearPythonOutput" type="button" hidden title="Limpar saída do Python"><svg class="ui-icon"><use href="#icon-close"></use></svg><span>Limpar</span></button><div class="viewport-switch" id="viewportSwitch" role="group" aria-label="Largura da prévia"><button type="button" class="active" data-viewport="desktop" aria-label="Prévia desktop" title="Desktop"><svg class="ui-icon"><use href="#icon-desktop"></use></svg></button><button type="button" data-viewport="tablet" aria-label="Prévia tablet" title="Tablet"><svg class="ui-icon"><use href="#icon-tablet"></use></svg></button><button type="button" data-viewport="mobile" aria-label="Prévia mobile" title="Mobile"><svg class="ui-icon"><use href="#icon-phone"></use></svg></button></div><button class="preview-run-button" id="runPlayground" type="button" aria-label="Executar código" title="Executar código (Ctrl + Enter)"><svg class="ui-icon"><use href="#icon-play"></use></svg><span class="visually-hidden">Executar</span></button><button class="preview-stop-button" id="stopPython" type="button" hidden aria-label="Parar execução do Python" title="Parar execução"><svg class="ui-icon"><use href="#icon-stop"></use></svg><span class="visually-hidden">Parar</span></button><button class="preview-action" id="runResultFullscreen" type="button" title="Mostrar resultado em tela cheia"><svg class="ui-icon"><use href="#icon-expand"></use></svg><span>Tela cheia</span></button><span id="runStatus" class="run-status" aria-live="polite">Pronto</span></div></div>
-            <div class="preview-stage" id="previewStage"><div class="preview-device" id="previewDevice" data-viewport="desktop"><iframe id="previewFrame" title="Resultado do código" sandbox="allow-scripts"></iframe><div class="python-runtime" id="pythonRuntime" hidden><div class="python-runtime-hero"><span class="python-runtime-icon"><svg class="ui-icon"><use href="#icon-python"></use></svg></span><div><strong>Python 3 no navegador</strong><p id="pythonRuntimeText">Execute o código para iniciar o runtime. Na primeira vez, o Pyodide será carregado pela internet.</p></div></div><div class="python-runtime-stats"><span>WebAssembly</span><span>Worker isolado</span><span>stdout / stderr</span></div></div></div><div class="fullscreen-hint" id="resultFullscreenHint" hidden>Pressione <kbd>Esc</kbd> para sair</div></div>
+            <div class="preview-stage" id="previewStage"><div class="preview-device" id="previewDevice" data-viewport="desktop"><iframe id="previewFrame" title="Resultado do código" sandbox="allow-scripts"></iframe><div class="tkinter-runtime" id="tkinterRuntime" hidden aria-live="polite" aria-label="Resultado visual do Tkinter Web Lite"></div><div class="python-runtime" id="pythonRuntime" hidden><div class="python-runtime-hero"><span class="python-runtime-icon"><svg class="ui-icon"><use href="#icon-python"></use></svg></span><div><strong>Python 3 no navegador</strong><p id="pythonRuntimeText">Execute o código para iniciar o runtime. Na primeira vez, o Pyodide será carregado pela internet.</p></div></div><div class="python-runtime-stats"><span>WebAssembly</span><span>Worker isolado</span><span>stdout / stderr</span></div></div></div><div class="fullscreen-hint" id="resultFullscreenHint" hidden>Pressione <kbd>Esc</kbd> para sair</div></div>
             <div class="console-panel" id="consolePanel"><div class="console-head"><div class="console-title-wrap"><strong id="consoleTitle">Console</strong><span id="consoleHint">JavaScript</span><span class="console-unread" id="consoleUnread" hidden>0</span></div><div class="console-actions"><button class="text-button" id="clearConsole" type="button">Limpar</button><button class="console-toggle" id="toggleConsole" type="button" aria-expanded="true"><span id="toggleConsoleText">Ocultar</span><svg class="ui-icon"><use href="#icon-chevron-down"></use></svg></button></div></div><div class="console-output" id="playgroundConsole" aria-live="polite"><div class="console-empty">Execute o código para ver logs e erros aqui.</div></div></div>
           </section>
         </div>
@@ -298,15 +299,15 @@
   </main>
 
   <footer class="site-footer">
-    <div class="shell footer-grid"><div class="footer-brand"><a class="brand" href="#home"><span class="brand-mark" aria-hidden="true"><img class="brand-symbol" src="assets/branding/enterprise-symbol.png?v=46" data-dark-src="assets/branding/enterprise-symbol.png?v=46" data-light-src="assets/branding/enterprise-symbol-light.png?v=46" alt="" /></span><span class="brand-name">Enterprise Educacional</span></a><p>Aprenda programação na prática, do primeiro conceito aos seus próprios projetos.</p></div><div><h2>Aprender</h2><a href="#trilhas">Trilhas</a><a href="#exercicios">Exercícios</a><a href="#desafios">Desafios</a><a href="#projetos">Projetos</a></div><div><h2>Ferramentas</h2><a href="#playground">Playground</a><a href="#glossario">Glossário</a><a href="#progresso">Progresso</a></div></div>
+    <div class="shell footer-grid"><div class="footer-brand"><a class="brand" href="#home"><span class="brand-mark" aria-hidden="true"><img class="brand-symbol" src="assets/branding/enterprise-symbol.png?v=47" data-dark-src="assets/branding/enterprise-symbol.png?v=47" data-light-src="assets/branding/enterprise-symbol-light.png?v=47" alt="" /></span><span class="brand-name">Enterprise Educacional</span></a><p>Aprenda programação na prática, do primeiro conceito aos seus próprios projetos.</p></div><div><h2>Aprender</h2><a href="#trilhas">Trilhas</a><a href="#exercicios">Exercícios</a><a href="#desafios">Desafios</a><a href="#projetos">Projetos</a></div><div><h2>Ferramentas</h2><a href="#playground">Playground</a><a href="#glossario">Glossário</a><a href="#progresso">Progresso</a></div></div>
     <div class="shell footer-bottom"><span>© 2026 Enterprise Educacional</span><span>Design, código e prática no mesmo lugar.</span></div>
   </footer>
 
-  <dialog class="search-dialog" id="searchDialog">
-    <form method="dialog" class="search-modal"><div class="search-modal-head"><label class="search-field modal-search"><svg class="ui-icon" aria-hidden="true"><use href="#icon-search"></use></svg><input id="globalSearch" type="search" placeholder="Buscar aulas, módulos, exercícios, projetos..." autocomplete="off" /></label><button class="icon-button" value="cancel" aria-label="Fechar busca"><svg class="ui-icon" aria-hidden="true"><use href="#icon-close"></use></svg></button></div><div class="search-results" id="searchResults"></div><div class="search-hint"><span><kbd>Ctrl/⌘ K</kbd> buscar</span><span><kbd>↑↓</kbd> navegar</span><span><kbd>Enter</kbd> abrir</span><span><kbd>Esc</kbd> fechar</span></div></form>
+  <dialog class="search-dialog" id="searchDialog" aria-label="Busca global">
+    <form method="dialog" class="search-modal"><div class="search-modal-head"><label class="search-field modal-search"><svg class="ui-icon" aria-hidden="true"><use href="#icon-search"></use></svg><input id="globalSearch" type="search" aria-label="Buscar no Enterprise Educacional" placeholder="Buscar aulas, módulos, exercícios, projetos..." autocomplete="off" /></label><button class="icon-button" value="cancel" aria-label="Fechar busca"><svg class="ui-icon" aria-hidden="true"><use href="#icon-close"></use></svg></button></div><div class="search-results" id="searchResults"></div><div class="search-hint"><span><kbd>Ctrl/⌘ K</kbd> buscar</span><span><kbd>↑↓</kbd> navegar</span><span><kbd>Enter</kbd> abrir</span><span><kbd>Esc</kbd> fechar</span></div></form>
   </dialog>
 
-  <dialog class="saved-code-dialog" id="saveCodeDialog">
+  <dialog class="saved-code-dialog" id="saveCodeDialog" aria-labelledby="saveCodeDialogTitle">
     <form class="saved-code-modal" id="saveCodeForm">
       <div class="saved-code-dialog-head"><div><span class="detail-kicker">Playground</span><strong id="saveCodeDialogTitle">Salvar código</strong><p>Escolha exatamente quais linguagens fazem parte deste projeto.</p></div><button class="icon-button" id="closeSaveCodeDialog" type="button" aria-label="Fechar"><svg class="ui-icon"><use href="#icon-close"></use></svg></button></div>
       <div class="saved-code-dialog-body">
@@ -324,16 +325,16 @@
     </form>
   </dialog>
 
-  <dialog class="saved-code-dialog saved-codes-library-dialog" id="savedCodesDialog">
+  <dialog class="saved-code-dialog saved-codes-library-dialog" id="savedCodesDialog" aria-label="Meus códigos salvos">
     <div class="saved-code-modal">
       <div class="saved-code-dialog-head"><div><span class="detail-kicker">Banco local</span><strong>Meus códigos</strong><p>Projetos que você decidiu guardar permanentemente neste navegador.</p></div><button class="icon-button" id="closeSavedCodesDialog" type="button" aria-label="Fechar"><svg class="ui-icon"><use href="#icon-close"></use></svg></button></div>
-      <div class="saved-codes-toolbar"><label class="search-field"><svg class="ui-icon"><use href="#icon-search"></use></svg><input id="savedCodesSearch" type="search" autocomplete="off" placeholder="Buscar projeto salvo..." /></label><div class="saved-codes-toolbar-actions"><span id="savedCodesCount">0 projetos</span><button class="button secondary compact" id="importSavedCodeFiles" type="button"><svg class="ui-icon"><use href="#icon-upload"></use></svg>Importar</button><input id="savedCodeImportInput" type="file" accept=".zip,.html,.htm,.css,.js,.mjs,.py,.json,.eeproject" multiple hidden></div></div>
+      <div class="saved-codes-toolbar"><label class="search-field"><svg class="ui-icon"><use href="#icon-search"></use></svg><input id="savedCodesSearch" type="search" aria-label="Buscar projeto salvo" autocomplete="off" placeholder="Buscar projeto salvo..." /></label><div class="saved-codes-toolbar-actions"><span id="savedCodesCount">0 projetos</span><button class="button secondary compact" id="importSavedCodeFiles" type="button"><svg class="ui-icon"><use href="#icon-upload"></use></svg>Importar</button><input id="savedCodeImportInput" type="file" accept=".zip,.html,.htm,.css,.js,.mjs,.py,.json,.eeproject" multiple hidden></div></div>
       <div class="saved-codes-list" id="savedCodesList"></div>
       <div class="saved-codes-footer"><span><strong>Exportar</strong> gera um ZIP com arquivos reais do projeto. <strong>Importar</strong> aceita esse ZIP ou arquivos HTML/CSS/JS/Python.</span><button class="button secondary" id="newSavedCodeFromLibrary" type="button">Salvar código atual</button></div>
     </div>
   </dialog>
 
-  <dialog class="saved-code-dialog cloud-sync-dialog" id="cloudSyncDialog">
+  <dialog class="saved-code-dialog cloud-sync-dialog" id="cloudSyncDialog" aria-label="Conta e sincronização em nuvem">
     <form class="saved-code-modal cloud-sync-modal" id="cloudSyncForm" method="dialog">
       <div class="saved-code-dialog-head"><div><span class="detail-kicker">Sincronização opcional</span><strong>Conta e nuvem</strong><p>O site continua funcionando sem conta. Para sincronizar, conecte seu próprio projeto Supabase.</p></div><button class="icon-button" id="closeCloudSync" type="button" aria-label="Fechar"><svg class="ui-icon"><use href="#icon-close"></use></svg></button></div>
       <div class="saved-code-dialog-body cloud-sync-body">
@@ -345,7 +346,7 @@
     </form>
   </dialog>
 
-  <dialog class="saved-code-dialog project-verifier-dialog" id="projectVerifierDialog">
+  <dialog class="saved-code-dialog project-verifier-dialog" id="projectVerifierDialog" aria-labelledby="projectVerifierTitle">
     <div class="saved-code-modal project-verifier-modal">
       <div class="saved-code-dialog-head"><div><span class="detail-kicker">Testes automáticos</span><strong id="projectVerifierTitle">Verificar código</strong><p id="projectVerifierDescription">Análise do código que está atualmente no Playground.</p></div><button class="icon-button" id="closeProjectVerifier" type="button" aria-label="Fechar"><svg class="ui-icon"><use href="#icon-close"></use></svg></button></div>
       <div class="project-verifier-summary" id="projectVerifierSummary"></div>
@@ -354,7 +355,7 @@
     </div>
   </dialog>
 
-  <dialog class="saved-code-dialog certificate-dialog" id="certificateDialog">
+  <dialog class="saved-code-dialog certificate-dialog" id="certificateDialog" aria-label="Certificado Enterprise Educacional">
     <div class="saved-code-modal certificate-modal">
       <div class="saved-code-dialog-head"><div><span class="detail-kicker">Conclusão de trilha</span><strong>Certificado Enterprise Educacional</strong><p>Disponível quando os critérios da trilha forem concluídos.</p></div><button class="icon-button" id="closeCertificate" type="button" aria-label="Fechar"><svg class="ui-icon"><use href="#icon-close"></use></svg></button></div>
       <div class="certificate-controls"><label><span>Nome no certificado</span><input id="certificateName" type="text" maxlength="90" placeholder="Seu nome" autocomplete="name"></label></div>
@@ -367,9 +368,9 @@
 
   <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="false"></div>
 
-  <script src="content-data.js?v=46"></script>
-  <script src="app.js?v=46"></script>
-  <script src="platform-features.js?v=46"></script>
-  <script src="bootstrap.js?v=46"></script>
+  <script src="content-data.js?v=47"></script>
+  <script src="app.js?v=47"></script>
+  <script src="platform-features.js?v=47"></script>
+  <script src="bootstrap.js?v=47"></script>
 </body>
 </html>

@@ -9,6 +9,11 @@ create table if not exists public.ee_user_data (
 
 alter table public.ee_user_data enable row level security;
 
+drop policy if exists "ee_user_data_select_own" on public.ee_user_data;
+drop policy if exists "ee_user_data_insert_own" on public.ee_user_data;
+drop policy if exists "ee_user_data_update_own" on public.ee_user_data;
+drop policy if exists "ee_user_data_delete_own" on public.ee_user_data;
+
 create policy "ee_user_data_select_own"
 on public.ee_user_data for select
 using (auth.uid() = user_id);
@@ -37,4 +42,4 @@ $$;
 drop trigger if exists ee_user_data_touch on public.ee_user_data;
 create trigger ee_user_data_touch
 before update on public.ee_user_data
-for each row execute procedure public.ee_touch_updated_at();
+for each row execute function public.ee_touch_updated_at();

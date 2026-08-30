@@ -14,6 +14,10 @@ const html = read('index.html');
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]);
 const duplicates = ids.filter((id,index) => ids.indexOf(id) !== index);
 if (duplicates.length) fail(`IDs duplicados: ${[...new Set(duplicates)].join(', ')}`); else ok(`${ids.length} IDs únicos no HTML`);
+const fragmentRefs = [...html.matchAll(/href="#([^"]+)"/g)].map(m => m[1]);
+const controlledRefs = [...html.matchAll(/aria-controls="([^"]+)"/g)].map(m => m[1]);
+for (const target of [...fragmentRefs, ...controlledRefs]) if (!ids.includes(target) && !['home','trilhas','aula','exercicios','desafios','projetos','playground','glossario','progresso'].includes(target)) fail(`Alvo de fragmento ausente: ${target}`);
+ok('Alvos de navegação/acessibilidade verificados');
 
 const localRefs = [...html.matchAll(/(?:src|href)="([^"#]+)"/g)].map(m => m[1]).filter(ref => !/^(?:https?:|data:|mailto:|tel:|javascript:)/.test(ref));
 for (const ref of localRefs) {
@@ -82,14 +86,48 @@ if (!manifest.name || !manifest.start_url || !Array.isArray(manifest.icons) || m
 else ok('Manifest PWA verificado');
 
 const versionSources = [html, read('app.js'), read('platform-features.js'), read('bootstrap.js'), read('service-worker.js')].join('\n');
-const staleVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1])).filter(version => version < 46);
+const staleVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1])).filter(version => version < 47);
 if (staleVersionRefs.length) fail(`Referências de cache antigas nos arquivos públicos: ${[...new Set(staleVersionRefs)].join(', ')}`); else ok('Referências de cache dos arquivos públicos atualizadas');
 
-for (const breakpoint of ['430px','760px','900px']) if (!css.includes(`max-width:${breakpoint}`) && !css.includes(`max-width: ${breakpoint}`)) fail(`Breakpoint responsivo ausente: ${breakpoint}`);
+for (const breakpoint of ['375px','390px','430px','760px','900px']) if (!css.includes(`max-width:${breakpoint}`) && !css.includes(`max-width: ${breakpoint}`)) fail(`Breakpoint responsivo ausente: ${breakpoint}`);
 else {}
 ok('Breakpoints principais presentes');
 
 if (/html\s*,?\s*body[^\{]*\{[^}]*overflow-x\s*:\s*hidden/i.test(css)) fail('overflow-x:hidden global encontrado; corrija a causa do overflow');
 else ok('Sem overflow-x:hidden global mascarando layout');
+
+
+
+const appSource = read('app.js');
+const platformSource = read('platform-features.js');
+const workerSource = read('service-worker.js');
+const schemaSource = fs.existsSync(path.join(root,'supabase/schema.sql')) ? read('supabase/schema.sql') : '';
+
+if (css.lastIndexOf('Quality consolidation v47') < css.lastIndexOf('Product polish v46')) fail('Camada final de CSS v47 não é a autoridade mais recente');
+else ok('Autoridade CSS v47 consolidada');
+if (data) {
+  const tipCounts = new Map();
+  for (const lesson of data.lessons || []) { const tip=String(lesson.tip || '').trim(); if (tip) tipCounts.set(tip,(tipCounts.get(tip)||0)+1); }
+  const effectiveTips = (data.lessons || []).map(lesson => {
+    const tip=String(lesson.tip || '').trim();
+    return tip && (tipCounts.get(tip)||0) >= 20 ? `${tip} Nesta aula, aplique essa orientação ao praticar “${lesson.moduleTitle}: ${lesson.title}”.` : tip;
+  });
+  if (new Set(effectiveTips).size !== effectiveTips.length) fail('Dicas pedagógicas continuam com repetição exata após contextualização v47');
+  else ok('Dicas pedagógicas repetidas contextualizadas por aula');
+}
+
+if (!appSource.includes('Tkinter Web Lite') || !appSource.includes('pythonUsesTkinter') || !html.includes('id="tkinterRuntime"')) fail('Tkinter Web Lite ausente ou incompleto');
+else ok('Tkinter Web Lite integrado ao Playground Python');
+if (!appSource.includes("'#f5efe6'")) fail('theme-color claro não acompanha a paleta Light Mode');
+else ok('Theme color Light Mode alinhado');
+if (!appSource.includes("event?.type === 'hashchange'") || !appSource.includes("heading.focus({ preventScroll:true })")) fail('Foco de navegação SPA não tratado');
+else ok('Foco de navegação SPA verificado');
+if (!/appVersion\s*:\s*47/.test(platformSource)) fail('Versão de backup não atualizada para v47');
+else ok('Versão de backup atualizada');
+if (!workerSource.includes("request.mode === 'navigate'") || /catch\(\(\) => caches\.match\('\.\/index\.html'\)\)/.test(workerSource)) fail('Fallback offline do Service Worker ainda pode devolver HTML para assets');
+else ok('Fallback PWA separado entre navegação e assets');
+for (const asset of ['favicon-light-16.png','favicon-light-32.png','apple-touch-icon-light.png']) if (!workerSource.includes(asset)) fail(`Asset Light Mode ausente do cache PWA: ${asset}`);
+if (schemaSource && !schemaSource.includes('drop policy if exists "ee_user_data_select_own"')) fail('schema.sql não é idempotente para policies');
+else if (schemaSource) ok('Policies Supabase idempotentes');
 
 if (process.exitCode) process.exit(process.exitCode);

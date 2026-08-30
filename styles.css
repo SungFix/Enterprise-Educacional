@@ -5042,3 +5042,87 @@ html[data-theme="light"] .workbench { box-shadow: 0 16px 38px rgba(43,38,32,.10)
 @media (prefers-reduced-motion: reduce) {
   .page.active, .tech-card, .feature-card, .roadmap-node, .option { animation: none !important; transition: none !important; transform: none !important; }
 }
+
+
+/* ==========================================================================\n   Quality consolidation v47 — final authority for responsive/accessibility QA\n   ========================================================================== */
+.tkinter-runtime {
+  width:100%; min-height:340px; display:grid; place-items:center; padding:22px;
+  overflow:auto; background:#0b0d0f; color:#e9edf1;
+}
+.tkinter-runtime[hidden] { display:none !important; }
+.tk-lite-loading { width:min(520px,100%); padding:26px; border:1px solid #313840; background:#12161a; }
+.tk-lite-loading strong { display:block; margin:8px 0 5px; }
+.tk-lite-loading p { margin:0; color:#aab2ba; font-size:13px; }
+.tk-lite-window {
+  width:min(760px,100%); min-height:260px; border:1px solid #3a424b; background:#f2f2f2; color:#171717;
+  box-shadow:0 22px 54px rgba(0,0,0,.32); overflow:hidden; font:14px/1.4 Arial,Helvetica,sans-serif;
+}
+.tk-lite-titlebar { min-height:34px; display:flex; align-items:center; gap:6px; padding:0 10px; background:#d9dde1; border-bottom:1px solid #b6bcc2; }
+.tk-lite-titlebar > span { width:9px; height:9px; border-radius:50%; background:#9ba2a9; }
+.tk-lite-titlebar strong { margin-left:6px; font-size:12px; font-weight:700; color:#2d3338; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.tk-lite-body { min-height:220px; padding:14px; background:#f0f0f0; overflow:auto; }
+.tk-lite-pack { display:flex; flex-direction:column; align-items:stretch; gap:6px; }
+.tk-lite-pack.tk-lite-pack-row { flex-direction:row; flex-wrap:wrap; align-items:center; }
+.tk-lite-grid { display:grid; gap:8px; align-items:center; }
+.tk-lite-place { position:relative; min-height:180px; }
+.tk-lite-frame { min-width:0; padding:8px; border:0; background:transparent; color:inherit; }
+.tk-lite-labelframe { border:1px solid #aaa; }
+.tk-lite-labelframe legend { padding:0 5px; }
+.tk-lite-label { min-width:0; white-space:pre-wrap; overflow-wrap:anywhere; }
+.tk-lite-button,.tk-lite-entry,.tk-lite-text,.tk-lite-listbox,.tk-lite-scale { font:inherit; color:#171717; }
+.tk-lite-button { min-height:32px; padding:5px 12px; border:1px solid #9aa0a6; border-radius:4px; background:#e8e8e8; cursor:pointer; }
+.tk-lite-button:hover { background:#fff; }
+.tk-lite-button:active { transform:translateY(1px); }
+.tk-lite-entry,.tk-lite-text,.tk-lite-listbox { width:100%; border:1px solid #969da3; border-radius:3px; background:#fff; padding:6px 8px; }
+.tk-lite-text { min-height:110px; resize:vertical; }
+.tk-lite-choice { display:inline-flex; align-items:center; gap:7px; min-height:28px; }
+.tk-lite-scale { width:100%; }
+.tk-lite-canvas { width:100%; max-width:100%; height:auto; background:#fff; border:1px solid #aaa; }
+.tk-lite-progress { width:100%; }
+.tk-lite-separator { width:100%; border:0; border-top:1px solid #aaa; }
+.tk-lite-message { margin-top:12px; padding:10px 12px; border:1px solid #9ca3aa; background:#fff; }
+.tk-lite-message strong { display:block; font-size:12px; }
+.tk-lite-message p { margin:3px 0 0; font-size:12px; }
+.tkinter-mode .preview-device { display:block; background:#0b0d0f; }
+.tkinter-mode .preview-stage { min-height:400px; }
+html[data-theme="light"] .tkinter-runtime { background:#e5ddd3; }
+
+/* v47 owns the final small-screen shell values; earlier historical layers remain inert underneath. */
+@media (max-width: 620px) {
+  :root { --shell: calc(100% - 22px); }
+  .preview-tools { max-width:100%; }
+  .tkinter-runtime { padding:12px; min-height:300px; }
+  .tk-lite-body { padding:10px; }
+}
+@media (max-width: 430px) {
+  :root { --shell: calc(100% - 18px); }
+  .header-inner { gap:8px; }
+  .header-actions { min-width:0; }
+  .page-header h1,.lesson-content h1 { overflow-wrap:anywhere; }
+  .preview-tools { gap:5px; }
+  .preview-action span:not(.visually-hidden), .run-status { font-size:10.5px; }
+  .tk-lite-window { min-height:230px; }
+  .tk-lite-grid { gap:6px; }
+}
+@media (max-width: 390px) {
+  :root { --shell: calc(100% - 16px); }
+  .header-actions { gap:2px; }
+  .icon-button,.search-trigger { width:36px; height:36px; min-height:36px; }
+  .brand-mark,.brand-symbol { width:34px; height:34px; }
+  .editor-pane-head .pane-tools { gap:6px; }
+  .editor-main-actions { gap:8px; }
+  .tkinter-runtime { padding:8px; }
+}
+@media (max-width: 375px) {
+  :root { --shell: calc(100% - 14px); }
+  .hero-copy h1 { font-size:clamp(36px,12vw,44px); }
+  .page-header h1,.lesson-content h1 { font-size:clamp(33px,10.8vw,39px); }
+  .header-inner { gap:5px; }
+  .header-actions { gap:1px; }
+  .mobile-menu-button,.icon-button,.search-trigger { width:34px; height:34px; min-height:34px; }
+  .preview-tools { overflow-x:auto; overscroll-behavior-inline:contain; scrollbar-width:none; }
+  .preview-tools::-webkit-scrollbar { display:none; }
+  .editor-statusbar { gap:7px 9px; }
+  .tk-lite-titlebar { padding-inline:7px; }
+  .tk-lite-body { padding:8px; }
+}

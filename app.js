@@ -14,6 +14,20 @@ const lessonById = new Map(lessons.map(lesson => [lesson.id, lesson]));
 const glossaryByTerm = new Map(glossary.map(term => [term.term.toLocaleLowerCase('pt-BR'), term]));
 const lessonsByCourse = new Map(courses.map(course => [course.id, lessons.filter(lesson => lesson.courseId === course.id).sort((a,b) => (a.order ?? 0) - (b.order ?? 0))]));
 
+function contextualizeRepeatedLessonTips(items) {
+  const counts = new Map();
+  items.forEach(lesson => {
+    const tip = String(lesson.tip || '').trim();
+    if (tip) counts.set(tip, (counts.get(tip) || 0) + 1);
+  });
+  items.forEach(lesson => {
+    const tip = String(lesson.tip || '').trim();
+    if (!tip || (counts.get(tip) || 0) < 20) return;
+    lesson.tip = `${tip} Nesta aula, aplique essa orientação ao praticar “${lesson.moduleTitle}: ${lesson.title}”.`;
+  });
+}
+contextualizeRepeatedLessonTips(lessons);
+
 const defaultPlayground = {
   html: `<main class="card">\n  <span class="tag">Enterprise Educacional</span>\n  <h1>Seu código, seu resultado.</h1>\n  <p>Edite este exemplo e clique em Executar.</p>\n  <button id="action">Testar JavaScript</button>\n</main>`,
   css: `:root { color-scheme: dark; }\n* { box-sizing: border-box; }\nbody {\n  margin: 0;\n  min-height: 100vh;\n  display: grid;\n  place-items: center;\n  padding: 32px;\n  font-family: system-ui, sans-serif;\n  background: #0b0d0f;\n  color: #f3f5f7;\n}\n.card {\n  width: min(520px, 86vw);\n  padding: 32px;\n  border: 1px solid #2b3138;\n  border-radius: 18px;\n  background: #12161a;\n  box-shadow: 0 18px 46px rgba(0,0,0,.32);\n}\n.tag { font-size: 12px; color: #9aa3ad; }\nh1 { color: #f7f8f9; }\np { color: #c2c8cf; }\nbutton {\n  padding: 10px 14px;\n  border: 1px solid #dfe3e7;\n  border-radius: 9px;\n  background: #eef1f4;\n  color: #111417;\n  font: inherit;\n  font-weight: 650;\n  cursor: pointer;\n}\nbutton:hover { background: #ffffff; }`,
@@ -29,7 +43,8 @@ const playgroundPresets = {
   counter: { label: 'Web · Contador DOM', title: 'Contador DOM', description: 'Eventos, estado e atualização da interface.', category: 'Web', icon: 'js', ...defaultPlayground, html: '<main>\n  <h1 id="value">0</h1>\n  <div>\n    <button data-action="minus">−</button>\n    <button data-action="reset">Resetar</button>\n    <button data-action="plus">+</button>\n  </div>\n</main>', css: ':root { color-scheme: dark; }\n* { box-sizing: border-box; }\nbody { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 32px; font-family: system-ui; text-align: center; background: #0b0d0f; color: #f3f5f7; }\nmain { padding: 30px; border: 1px solid #2b3138; border-radius: 16px; background: #12161a; box-shadow: 0 18px 46px rgba(0,0,0,.28); }\nh1 { font-size: 72px; margin: 0 0 20px; color: #f7f8f9; }\nbutton { padding: 10px 14px; border: 1px solid #343b43; border-radius: 9px; background: #191f25; color: #f3f5f7; font: inherit; cursor: pointer; }\nbutton:hover { background: #222a31; }', js: `let value = 0;\nconst output = document.querySelector('#value');\nfunction render() { output.textContent = value; console.log('Valor:', value); }\ndocument.addEventListener('click', event => {\n  const action = event.target.dataset.action;\n  if (action === 'plus') value++;\n  if (action === 'minus') value--;\n  if (action === 'reset') value = 0;\n  if (action) render();\n});` },
   pythonBasics: { label: 'Python · Fundamentos', title: 'Fundamentos', description: 'Variáveis, operações e saída com print().', category: 'Python', icon: 'python', ...defaultPlayground, python: `nome = "Marina"\nidade = 18\n\nprint(f"Olá, {nome}!")\nprint(f"No próximo ano você terá {idade + 1} anos.")` },
   pythonLists: { label: 'Python · Listas e funções', title: 'Listas e funções', description: 'Coleções, funções e compreensão de listas.', category: 'Python', icon: 'python', ...defaultPlayground, python: `notas = [7.5, 9.0, 8.5, 10.0]\n\ndef calcular_media(valores):\n    return sum(valores) / len(valores)\n\nacima_de_oito = [nota for nota in notas if nota >= 8]\n\nprint("Notas:", notas)\nprint("Média:", round(calcular_media(notas), 2))\nprint("Notas >= 8:", acima_de_oito)` },
-  pythonClass: { label: 'Python · Classe simples', title: 'Classe simples', description: 'Objetos, atributos, métodos e __init__.', category: 'Python', icon: 'python', ...defaultPlayground, python: `class Curso:\n    def __init__(self, nome, aulas):\n        self.nome = nome\n        self.aulas = aulas\n\n    def resumo(self):\n        return f"{self.nome}: {self.aulas} aulas"\n\ncurso = Curso("Python", 202)\nprint(curso.resumo())` }
+  pythonClass: { label: 'Python · Classe simples', title: 'Classe simples', description: 'Objetos, atributos, métodos e __init__.', category: 'Python', icon: 'python', ...defaultPlayground, python: `class Curso:\n    def __init__(self, nome, aulas):\n        self.nome = nome\n        self.aulas = aulas\n\n    def resumo(self):\n        return f"{self.nome}: {self.aulas} aulas"\n\ncurso = Curso("Python", 202)\nprint(curso.resumo())` },
+  pythonTkinter: { label: 'Python · Tkinter Web Lite', title: 'Tkinter Web Lite', description: 'Crie interfaces Tkinter e visualize o resultado diretamente no navegador.', category: 'Python', icon: 'python', ...defaultPlayground, python: `import tkinter as tk\n\njanela = tk.Tk()\njanela.title("Olá, Tkinter!")\njanela.geometry("420x260")\n\ntitulo = tk.Label(janela, text="Tkinter Web Lite", font=("Arial", 20, "bold"))\ntitulo.pack(pady=24)\n\nnome = tk.StringVar(value="Marina")\nentrada = tk.Entry(janela, textvariable=nome)\nentrada.pack(padx=28, fill="x")\n\ndef saudar():\n    titulo.config(text=f"Olá, {nome.get()}!")\n\ntk.Button(janela, text="Saudar", command=saudar).pack(pady=18)\njanela.mainloop()` }
 };
 
 const storageKey = 'enterprise-educacional-state-v2';
@@ -412,7 +427,7 @@ function closeMobileNav({ restoreFocus = false } = {}) {
   if (restoreFocus && wasOpen) button.focus();
 }
 
-function route() {
+function route(event) {
   closeMobileNav();
   $('.lesson-sidebar')?.classList.remove('mobile-open');
   $('#lessonMobileToggle')?.setAttribute('aria-expanded', 'false');
@@ -461,6 +476,16 @@ function route() {
 
   updateDocumentMeta(pageName, pageName === 'aula' ? lessonById.get(currentLessonId)?.title : '');
   if (pageName !== 'not-found') window.scrollTo({ top: 0, behavior: 'instant' });
+  if (event?.type === 'hashchange') {
+    requestAnimationFrame(() => {
+      const heading = $('.page.active h1') || $('#main');
+      if (!heading) return;
+      const hadTabindex = heading.hasAttribute('tabindex');
+      if (!hadTabindex) heading.setAttribute('tabindex', '-1');
+      heading.focus({ preventScroll:true });
+      if (!hadTabindex) heading.addEventListener('blur', () => heading.removeAttribute('tabindex'), { once:true });
+    });
+  }
 }
 window.addEventListener('hashchange', route);
 
@@ -3106,26 +3131,29 @@ function selectEditorTab(lang) {
 
 function syncEditorMode() {
   const python = activeLang === 'python';
+  const tkinter = python && tkinterLiteActive;
   $('#workbench')?.classList.toggle('python-mode', python);
+  $('#workbench')?.classList.toggle('tkinter-mode', tkinter);
   if ($('#previewFrame')) $('#previewFrame').hidden = python;
   if ($('#pythonRuntime')) $('#pythonRuntime').hidden = true;
+  if ($('#tkinterRuntime')) $('#tkinterRuntime').hidden = !tkinter;
   if ($('#viewportSwitch')) $('#viewportSwitch').hidden = python;
   if ($('#clearPythonOutput')) $('#clearPythonOutput').hidden = !python;
   syncPythonStdinVisibility();
-  if ($('#previewTitle')) $('#previewTitle').textContent = python ? 'Terminal Python' : 'Resultado';
-  if ($('#runtimeBadge')) $('#runtimeBadge').textContent = python ? 'Python 3 · Pyodide' : 'Web sandbox';
+  if ($('#previewTitle')) $('#previewTitle').textContent = tkinter ? 'Tkinter Web Lite' : (python ? 'Terminal Python' : 'Resultado');
+  if ($('#runtimeBadge')) $('#runtimeBadge').textContent = tkinter ? 'Tkinter Web Lite · Pyodide' : (python ? 'Python 3 · Pyodide' : 'Web sandbox');
   if ($('#consoleTitle')) $('#consoleTitle').textContent = python ? 'Terminal Python' : 'Console';
-  if ($('#consoleHint')) $('#consoleHint').textContent = python ? 'stdout / stderr' : 'JavaScript';
+  if ($('#consoleHint')) $('#consoleHint').textContent = tkinter ? 'prints / erros' : (python ? 'stdout / stderr' : 'JavaScript');
   if ($('#editorLanguageStatus')) $('#editorLanguageStatus').textContent = languageLabel(activeLang);
   const run = $('#runPlayground');
   if (run) {
-    const label = python ? 'Executar Python' : 'Executar código';
+    const label = tkinter ? 'Executar Tkinter' : (python ? 'Executar Python' : 'Executar código');
     run.setAttribute('aria-label', label);
     run.setAttribute('title', `${label} (Ctrl + Enter)`);
   }
   if ($('#stopPython')) $('#stopPython').hidden = !python || !pythonRunning;
   const runtimeNote = $('.playground-runtime-note strong');
-  if (runtimeNote) runtimeNote.textContent = python ? 'Python isolado' : 'Execução segura';
+  if (runtimeNote) runtimeNote.textContent = tkinter ? 'Tkinter Web Lite' : (python ? 'Python isolado' : 'Execução segura');
   applyConsoleState();
   $$('#editorTabs button').forEach(tab => tab.setAttribute('aria-selected', String(tab.dataset.lang === activeLang)));
 }
@@ -3281,6 +3309,9 @@ function runPlayground() {
 
 function runWebPlayground() {
   if (!$('#previewFrame')) return;
+  tkinterLiteActive = false;
+  tkinterLiteSnapshot = null;
+  if ($('#tkinterRuntime')) $('#tkinterRuntime').hidden = true;
   pg[activeLang] = $('#codeEditor')?.value ?? pg[activeLang];
   clearConsole();
   const bootstrap = `<script>(function(){const format=v=>{try{return typeof v==='string'?v:JSON.stringify(v)}catch{return String(v)}};['log','warn','error'].forEach(level=>{const original=console[level].bind(console);console[level]=(...args)=>{parent.postMessage({source:'ee-playground',level,text:args.map(format).join(' ')},'*');original(...args)}});window.onerror=(message,source,line,column)=>{parent.postMessage({source:'ee-playground',level:'error',text:String(message)+' · linha '+line+':'+column},'*')};window.onunhandledrejection=e=>parent.postMessage({source:'ee-playground',level:'error',text:'Promise rejeitada: '+format(e.reason)},'*');})();<\/script>`;
@@ -3293,7 +3324,10 @@ function runWebPlayground() {
 }
 
 function preparePythonPane() {
-  clearConsole('Python pronto para executar. A primeira execução carrega o runtime pela internet.');
+  tkinterLiteActive = pythonUsesTkinter($('#codeEditor')?.value || pg.python || '');
+  if ($('#tkinterRuntime')) $('#tkinterRuntime').hidden = !tkinterLiteActive || !tkinterLiteSnapshot;
+  syncEditorMode();
+  clearConsole(tkinterLiteActive ? 'Tkinter Web Lite pronto. Execute para gerar a interface visual; prints e erros aparecem no Console.' : 'Python pronto para executar. A primeira execução carrega o runtime pela internet.');
   if ($('#pythonRuntimeText')) {
     $('#pythonRuntimeText').textContent = pythonWorker
       ? 'Runtime iniciado. Execute novamente quando quiser.'
@@ -3302,12 +3336,586 @@ function preparePythonPane() {
   setRunStatus('Pronto para Python');
 }
 
+let tkinterLiteActive = false;
+let tkinterLiteSnapshot = null;
+
+const TKINTER_LITE_PY = String.raw`
+import sys, types, json, itertools
+
+_ee_tk_widgets = {}
+_ee_tk_commands = {}
+_ee_tk_counter = itertools.count(1)
+_ee_tk_messages = []
+_ee_tk_root = None
+
+class Variable:
+    def __init__(self, master=None, value=None, name=None):
+        self._value = value
+    def get(self): return self._value
+    def set(self, value): self._value = value
+    def __str__(self): return str(self._value if self._value is not None else '')
+
+class StringVar(Variable):
+    def __init__(self, master=None, value='', name=None): super().__init__(master, value, name)
+class IntVar(Variable):
+    def __init__(self, master=None, value=0, name=None): super().__init__(master, int(value or 0), name)
+class DoubleVar(Variable):
+    def __init__(self, master=None, value=0.0, name=None): super().__init__(master, float(value or 0), name)
+class BooleanVar(Variable):
+    def __init__(self, master=None, value=False, name=None): super().__init__(master, bool(value), name)
+
+def _ee_safe(value):
+    if isinstance(value, Variable): return value.get()
+    if callable(value): return None
+    if isinstance(value, (list, tuple)): return [_ee_safe(v) for v in value]
+    if isinstance(value, dict): return {str(k): _ee_safe(v) for k, v in value.items()}
+    if value is None or isinstance(value, (str, int, float, bool)): return value
+    return str(value)
+
+def _ee_register_command(widget_id, command):
+    if callable(command): _ee_tk_commands[widget_id] = command
+    elif widget_id in _ee_tk_commands: _ee_tk_commands.pop(widget_id, None)
+
+class _Widget:
+    _type = 'Widget'
+    def __init__(self, master=None, cnf=None, **kwargs):
+        global _ee_tk_root
+        self.master = master
+        self._id = f'w{next(_ee_tk_counter)}'
+        self._children = []
+        self._options = {}
+        self._manager = ''
+        self._layout = {}
+        self._value = ''
+        self._items = []
+        self._canvas = []
+        self._destroyed = False
+        if master is not None and hasattr(master, '_children'):
+            master._children.append(self)
+        _ee_tk_widgets[self._id] = self
+        if cnf and isinstance(cnf, dict): kwargs = {**cnf, **kwargs}
+        self.configure(**kwargs)
+    def pack(self, **kwargs): self._manager='pack'; self._layout=dict(kwargs); return self
+    def grid(self, **kwargs): self._manager='grid'; self._layout=dict(kwargs); return self
+    def place(self, **kwargs): self._manager='place'; self._layout=dict(kwargs); return self
+    def pack_forget(self): self._manager=''; self._layout={}
+    grid_forget = pack_forget
+    place_forget = pack_forget
+    def configure(self, cnf=None, **kwargs):
+        if cnf and isinstance(cnf, dict): kwargs = {**cnf, **kwargs}
+        for key, value in kwargs.items():
+            key = str(key)
+            if key == 'command': _ee_register_command(self._id, value)
+            else: self._options[key] = value
+        return None
+    config = configure
+    def cget(self, key): return self._options.get(key)
+    def __getitem__(self, key): return self.cget(key)
+    def __setitem__(self, key, value): self.configure(**{key:value})
+    def destroy(self):
+        self._destroyed = True
+        _ee_tk_commands.pop(self._id, None)
+        if self.master is not None and self in getattr(self.master, '_children', []): self.master._children.remove(self)
+    def winfo_children(self): return [w for w in self._children if not w._destroyed]
+    def winfo_exists(self): return int(not self._destroyed)
+    def update(self): return None
+    update_idletasks = update
+    def bind(self, sequence=None, func=None, add=None):
+        if callable(func): self._options['_bind'] = str(sequence or '')
+        return self._id
+    def focus_set(self): self._options['_focus'] = True
+    focus = focus_set
+
+class Tk(_Widget):
+    _type='Tk'
+    def __init__(self, *args, **kwargs):
+        global _ee_tk_root
+        super().__init__(None, **kwargs)
+        _ee_tk_root = self
+        self._title = 'Tkinter Web Lite'
+        self._geometry = ''
+        self._resizable = (True, True)
+        self._minsize = None
+        self._maxsize = None
+    def title(self, text=None):
+        if text is None: return self._title
+        self._title = str(text)
+    wm_title = title
+    def geometry(self, spec=None):
+        if spec is None: return self._geometry
+        self._geometry = str(spec)
+    wm_geometry = geometry
+    def resizable(self, width=None, height=None):
+        if width is None and height is None: return self._resizable
+        self._resizable = (bool(width), bool(height))
+    def minsize(self, width=None, height=None):
+        if width is not None and height is not None: self._minsize=(int(width),int(height))
+        return self._minsize
+    def maxsize(self, width=None, height=None):
+        if width is not None and height is not None: self._maxsize=(int(width),int(height))
+        return self._maxsize
+    def mainloop(self, n=0): return None
+    def quit(self): return None
+    def withdraw(self): self._options['_withdrawn']=True
+    def deiconify(self): self._options['_withdrawn']=False
+    def after(self, ms, func=None, *args):
+        if callable(func) and float(ms or 0) <= 0: return func(*args)
+        return f'after-{self._id}'
+    def after_cancel(self, _id): return None
+
+class Toplevel(Tk):
+    _type='Toplevel'
+    def __init__(self, master=None, **kwargs):
+        _Widget.__init__(self, master, **kwargs)
+        self._title='Janela'
+        self._geometry=''
+        self._resizable=(True,True)
+        self._minsize=None; self._maxsize=None
+
+class Frame(_Widget): _type='Frame'
+class LabelFrame(Frame): _type='LabelFrame'
+class Label(_Widget): _type='Label'
+class Message(Label): _type='Message'
+
+class Button(_Widget):
+    _type='Button'
+    def invoke(self):
+        command = _ee_tk_commands.get(self._id)
+        return command() if callable(command) else None
+
+class Entry(_Widget):
+    _type='Entry'
+    def __init__(self, master=None, cnf=None, **kwargs):
+        super().__init__(master, cnf, **kwargs)
+        variable=self._options.get('textvariable')
+        self._value = str(variable.get() if isinstance(variable, Variable) else self._options.get('text','') or '')
+    def get(self):
+        variable=self._options.get('textvariable')
+        return str(variable.get()) if isinstance(variable, Variable) else self._value
+    def delete(self, first, last=None):
+        self._value=''
+        variable=self._options.get('textvariable')
+        if isinstance(variable, Variable): variable.set('')
+    def insert(self, index, string):
+        value=self.get(); text=str(string); idx=len(value) if str(index).lower() in ('end','insert') else int(index or 0)
+        self._value=value[:idx]+text+value[idx:]
+        variable=self._options.get('textvariable')
+        if isinstance(variable, Variable): variable.set(self._value)
+
+class Text(_Widget):
+    _type='Text'
+    def get(self, start='1.0', end='end'): return self._value
+    def delete(self, start='1.0', end='end'): self._value=''
+    def insert(self, index, chars, *tags): self._value += str(chars)
+
+class Checkbutton(Button):
+    _type='Checkbutton'
+    def select(self):
+        variable=self._options.get('variable'); value=self._options.get('onvalue',1)
+        if isinstance(variable, Variable): variable.set(value)
+    def deselect(self):
+        variable=self._options.get('variable'); value=self._options.get('offvalue',0)
+        if isinstance(variable, Variable): variable.set(value)
+    def toggle(self):
+        variable=self._options.get('variable')
+        if isinstance(variable, Variable):
+            current=variable.get(); variable.set(self._options.get('offvalue',0) if current==self._options.get('onvalue',1) else self._options.get('onvalue',1))
+
+class Radiobutton(Button): _type='Radiobutton'
+
+class Scale(_Widget):
+    _type='Scale'
+    def __init__(self, master=None, cnf=None, **kwargs): super().__init__(master, cnf, **kwargs); self._value=float(self._options.get('from_',0) or 0)
+    def get(self): return self._value
+    def set(self, value): self._value=float(value)
+
+class Spinbox(Entry): _type='Spinbox'
+
+class Listbox(_Widget):
+    _type='Listbox'
+    def insert(self, index, *elements): self._items.extend(str(x) for x in elements)
+    def delete(self, first, last=None): self._items=[]
+    def get(self, first, last=None):
+        if last is None: return self._items[int(first)] if self._items else ''
+        return tuple(self._items)
+    def curselection(self): return tuple()
+
+class Canvas(_Widget):
+    _type='Canvas'
+    def _draw(self, kind, coords, kwargs):
+        item={'kind':kind,'coords':[float(x) for x in coords],'options':{str(k):_ee_safe(v) for k,v in kwargs.items()}}
+        self._canvas.append(item); return len(self._canvas)
+    def create_rectangle(self,*coords,**kwargs): return self._draw('rectangle',coords,kwargs)
+    def create_oval(self,*coords,**kwargs): return self._draw('oval',coords,kwargs)
+    def create_line(self,*coords,**kwargs): return self._draw('line',coords,kwargs)
+    def create_text(self,*coords,**kwargs): return self._draw('text',coords,kwargs)
+    def create_polygon(self,*coords,**kwargs): return self._draw('polygon',coords,kwargs)
+    def delete(self, tag): self._canvas=[] if str(tag)=='all' else self._canvas
+
+class Menu(_Widget):
+    _type='Menu'
+    def add_command(self, **kwargs): self._items.append({'type':'command', **kwargs})
+    def add_separator(self): self._items.append({'type':'separator'})
+    def add_cascade(self, **kwargs): self._items.append({'type':'cascade', **kwargs})
+
+class OptionMenu(_Widget):
+    _type='OptionMenu'
+    def __init__(self, master, variable, default=None, *values, **kwargs):
+        kwargs={'variable':variable,'values':[default,*values] if default is not None else list(values), **kwargs}
+        super().__init__(master, **kwargs)
+        if default is not None and isinstance(variable, Variable): variable.set(default)
+
+class Scrollbar(_Widget): _type='Scrollbar'
+class PanedWindow(Frame): _type='PanedWindow'
+
+class Combobox(Entry): _type='Combobox'
+class Progressbar(_Widget): _type='Progressbar'
+class Separator(_Widget): _type='Separator'
+class Treeview(_Widget): _type='Treeview'
+
+class PhotoImage:
+    def __init__(self, *args, **kwargs): self.kwargs=kwargs
+class Font:
+    def __init__(self, *args, **kwargs): self.kwargs=kwargs
+    def configure(self, **kwargs): self.kwargs.update(kwargs)
+
+class _MessageBoxModule(types.ModuleType):
+    def _show(self, kind, title, message, **kwargs):
+        _ee_tk_messages.append({'kind':kind,'title':str(title),'message':str(message)})
+        return 'ok'
+    def showinfo(self,title,message,**kwargs): return self._show('info',title,message,**kwargs)
+    def showwarning(self,title,message,**kwargs): return self._show('warning',title,message,**kwargs)
+    def showerror(self,title,message,**kwargs): return self._show('error',title,message,**kwargs)
+    def askyesno(self,title,message,**kwargs): self._show('question',title,message,**kwargs); return True
+    def askokcancel(self,title,message,**kwargs): self._show('question',title,message,**kwargs); return True
+
+class _FileDialogModule(types.ModuleType):
+    def askopenfilename(self, **kwargs): return ''
+    def asksaveasfilename(self, **kwargs): return ''
+    def askdirectory(self, **kwargs): return ''
+
+
+def _ee_widget_snapshot(widget):
+    options={}
+    for key,value in widget._options.items():
+        if key.startswith('_'): continue
+        safe=_ee_safe(value)
+        if safe is not None: options[key]=safe
+    variable=widget._options.get('textvariable')
+    if isinstance(variable, Variable): options['text']=str(variable.get())
+    variable=widget._options.get('variable')
+    if isinstance(variable, Variable): options['_variableValue']=_ee_safe(variable.get())
+    if isinstance(widget, Entry): options['_value']=widget.get()
+    if isinstance(widget, Text): options['_value']=widget._value
+    if isinstance(widget, Scale): options['_value']=widget._value
+    return {
+        'id':widget._id,
+        'type':widget._type,
+        'parent':getattr(widget.master,'_id',None),
+        'manager':widget._manager,
+        'layout':_ee_safe(widget._layout),
+        'options':options,
+        'items':_ee_safe(widget._items),
+        'canvas':_ee_safe(widget._canvas),
+        'hasCommand':widget._id in _ee_tk_commands,
+    }
+
+def __ee_tk_snapshot():
+    root=_ee_tk_root
+    data={
+        'title':getattr(root,'_title','Tkinter Web Lite') if root else 'Tkinter Web Lite',
+        'geometry':getattr(root,'_geometry','') if root else '',
+        'widgets':[_ee_widget_snapshot(w) for w in _ee_tk_widgets.values() if not w._destroyed],
+        'messages':list(_ee_tk_messages),
+    }
+    return json.dumps(data, ensure_ascii=False)
+
+def __ee_tk_apply_values(payload):
+    values=json.loads(payload or '{}') if isinstance(payload,str) else (payload or {})
+    for widget_id,value in values.items():
+        widget=_ee_tk_widgets.get(widget_id)
+        if not widget: continue
+        if isinstance(widget, Entry):
+            widget._value=str(value if value is not None else '')
+            variable=widget._options.get('textvariable')
+            if isinstance(variable, Variable): variable.set(widget._value)
+        elif isinstance(widget, Text): widget._value=str(value if value is not None else '')
+        elif isinstance(widget, Scale):
+            try: widget._value=float(value)
+            except: pass
+        elif isinstance(widget, Checkbutton):
+            variable=widget._options.get('variable')
+            if isinstance(variable, Variable):
+                onvalue=widget._options.get('onvalue',1); offvalue=widget._options.get('offvalue',0)
+                variable.set(onvalue if str(value)==str(onvalue) or value is True else offvalue)
+        elif isinstance(widget, Radiobutton):
+            variable=widget._options.get('variable')
+            if isinstance(variable, Variable): variable.set(value)
+
+def __ee_tk_invoke(widget_id):
+    widget=_ee_tk_widgets.get(widget_id)
+    if isinstance(widget, Radiobutton):
+        variable=widget._options.get('variable')
+        if isinstance(variable, Variable): variable.set(widget._options.get('value',1))
+    command=_ee_tk_commands.get(widget_id)
+    if callable(command):
+        if isinstance(widget, Scale): return command(str(widget._value))
+        return command()
+    return None
+
+def __ee_tk_reset():
+    global _ee_tk_widgets, _ee_tk_commands, _ee_tk_counter, _ee_tk_messages, _ee_tk_root
+    _ee_tk_widgets={}; _ee_tk_commands={}; _ee_tk_counter=itertools.count(1); _ee_tk_messages=[]; _ee_tk_root=None
+
+_tk=types.ModuleType('tkinter')
+for _name,_value in list(globals().items()):
+    if _name in {'Tk','Toplevel','Frame','LabelFrame','Label','Message','Button','Entry','Text','Checkbutton','Radiobutton','Scale','Spinbox','Listbox','Canvas','Menu','OptionMenu','Scrollbar','PanedWindow','StringVar','IntVar','DoubleVar','BooleanVar','PhotoImage'}:
+        setattr(_tk,_name,_value)
+for _name,_value in {
+    'END':'end','INSERT':'insert','LEFT':'left','RIGHT':'right','TOP':'top','BOTTOM':'bottom','X':'x','Y':'y','BOTH':'both','HORIZONTAL':'horizontal','VERTICAL':'vertical','N':'n','S':'s','E':'e','W':'w','NW':'nw','NE':'ne','SW':'sw','SE':'se','CENTER':'center','NORMAL':'normal','DISABLED':'disabled','ACTIVE':'active','SUNKEN':'sunken','RAISED':'raised','FLAT':'flat','GROOVE':'groove','RIDGE':'ridge','WORD':'word','CHAR':'char','NONE':'none'
+}.items(): setattr(_tk,_name,_value)
+
+_ttk=types.ModuleType('tkinter.ttk')
+for _name,_value in {'Frame':Frame,'LabelFrame':LabelFrame,'Label':Label,'Button':Button,'Entry':Entry,'Checkbutton':Checkbutton,'Radiobutton':Radiobutton,'Scale':Scale,'Spinbox':Spinbox,'Scrollbar':Scrollbar,'Panedwindow':PanedWindow,'Combobox':Combobox,'Progressbar':Progressbar,'Separator':Separator,'Treeview':Treeview}.items(): setattr(_ttk,_name,_value)
+_messagebox=_MessageBoxModule('tkinter.messagebox')
+_filedialog=_FileDialogModule('tkinter.filedialog')
+_font=types.ModuleType('tkinter.font'); _font.Font=Font
+_tk.ttk=_ttk; _tk.messagebox=_messagebox; _tk.filedialog=_filedialog; _tk.font=_font
+sys.modules['tkinter']=_tk
+sys.modules['tkinter.ttk']=_ttk
+sys.modules['tkinter.messagebox']=_messagebox
+sys.modules['tkinter.filedialog']=_filedialog
+sys.modules['tkinter.font']=_font
+`;
+
+function pythonUsesTkinter(code = '') {
+  return /(^|\n)\s*(?:import\s+tkinter(?:\s+as\s+\w+)?|from\s+tkinter(?:\.\w+)?\s+import\s+)/m.test(String(code));
+}
+
+function collectTkinterLiteValues() {
+  const runtime = $('#tkinterRuntime');
+  if (!runtime) return {};
+  const values = {};
+  runtime.querySelectorAll('[data-tk-widget-id]').forEach(node => {
+    const id = node.dataset.tkWidgetId;
+    if (!id) return;
+    if (node.matches('input[type="checkbox"],input[type="radio"]')) values[id] = node.checked ? (node.dataset.tkOnvalue ?? true) : (node.dataset.tkOffvalue ?? false);
+    else if ('value' in node) values[id] = node.value;
+  });
+  return values;
+}
+
+function sendTkinterLiteEvent(widgetId) {
+  if (!pythonWorker || !widgetId) return;
+  pythonWorker.postMessage({ type:'tk-event', runId:pythonRunId, widgetId, values:collectTkinterLiteValues() });
+}
+
+function tkinterLiteLength(value, fallback = 0) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+
+function applyTkinterLiteWidgetStyle(element, widget) {
+  const options = widget.options || {};
+  const layout = widget.layout || {};
+  const bg = options.bg ?? options.background;
+  const fg = options.fg ?? options.foreground;
+  if (bg) element.style.background = String(bg);
+  if (fg) element.style.color = String(fg);
+  if (options.width && !['Entry','Text','Listbox'].includes(widget.type)) element.style.minWidth = `${Math.max(0, tkinterLiteLength(options.width))}ch`;
+  if (options.height && !['Entry'].includes(widget.type)) element.style.minHeight = `${Math.max(0, tkinterLiteLength(options.height))}em`;
+  if (options.padx !== undefined) element.style.paddingInline = `${Math.max(0, tkinterLiteLength(options.padx))}px`;
+  if (options.pady !== undefined) element.style.paddingBlock = `${Math.max(0, tkinterLiteLength(options.pady))}px`;
+  if (options.font) {
+    const font = Array.isArray(options.font) ? options.font : String(options.font).split(/\s+/);
+    if (font[0]) element.style.fontFamily = String(font[0]);
+    if (font[1] && Number.isFinite(Number(font[1]))) element.style.fontSize = `${Math.abs(Number(font[1]))}px`;
+    if (font.some(item => String(item).toLowerCase() === 'bold')) element.style.fontWeight = '700';
+  }
+  if (widget.manager === 'grid') {
+    element.style.gridColumn = `${Number(layout.column || 0) + 1} / span ${Number(layout.columnspan || 1)}`;
+    element.style.gridRow = `${Number(layout.row || 0) + 1} / span ${Number(layout.rowspan || 1)}`;
+    const sticky = String(layout.sticky || '').toLowerCase();
+    if (sticky.includes('e') && sticky.includes('w')) element.style.width = '100%';
+    if (sticky.includes('n') && sticky.includes('s')) element.style.height = '100%';
+    if (sticky.includes('e') && !sticky.includes('w')) element.style.justifySelf = 'end';
+    if (sticky.includes('w') && !sticky.includes('e')) element.style.justifySelf = 'start';
+  } else if (widget.manager === 'place') {
+    element.style.position = 'absolute';
+    if (layout.x !== undefined) element.style.left = `${tkinterLiteLength(layout.x)}px`;
+    if (layout.y !== undefined) element.style.top = `${tkinterLiteLength(layout.y)}px`;
+    if (layout.relx !== undefined) element.style.left = `${tkinterLiteLength(layout.relx) * 100}%`;
+    if (layout.rely !== undefined) element.style.top = `${tkinterLiteLength(layout.rely) * 100}%`;
+    if (layout.width !== undefined) element.style.width = `${tkinterLiteLength(layout.width)}px`;
+    if (layout.height !== undefined) element.style.height = `${tkinterLiteLength(layout.height)}px`;
+    if (layout.relwidth !== undefined) element.style.width = `${tkinterLiteLength(layout.relwidth) * 100}%`;
+    if (layout.relheight !== undefined) element.style.height = `${tkinterLiteLength(layout.relheight) * 100}%`;
+  } else {
+    const fill = String(layout.fill || '').toLowerCase();
+    if (fill === 'x' || fill === 'both') element.style.width = '100%';
+    if (layout.expand) element.style.flex = '1 1 auto';
+    const padx = Array.isArray(layout.padx) ? layout.padx[0] : layout.padx;
+    const pady = Array.isArray(layout.pady) ? layout.pady[0] : layout.pady;
+    if (padx !== undefined || pady !== undefined) element.style.margin = `${tkinterLiteLength(pady)}px ${tkinterLiteLength(padx)}px`;
+  }
+}
+
+function createTkinterLiteCanvas(widget) {
+  const options = widget.options || {};
+  const width = Math.max(80, tkinterLiteLength(options.width, 300));
+  const height = Math.max(60, tkinterLiteLength(options.height, 180));
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+  svg.classList.add('tk-lite-canvas');
+  (widget.canvas || []).forEach(item => {
+    const coords = item.coords || [];
+    const opts = item.options || {};
+    let node = null;
+    if (item.kind === 'rectangle' && coords.length >= 4) {
+      node = document.createElementNS(svg.namespaceURI,'rect');
+      node.setAttribute('x', Math.min(coords[0],coords[2])); node.setAttribute('y',Math.min(coords[1],coords[3]));
+      node.setAttribute('width',Math.abs(coords[2]-coords[0])); node.setAttribute('height',Math.abs(coords[3]-coords[1]));
+    } else if (item.kind === 'oval' && coords.length >= 4) {
+      node = document.createElementNS(svg.namespaceURI,'ellipse');
+      node.setAttribute('cx',(coords[0]+coords[2])/2); node.setAttribute('cy',(coords[1]+coords[3])/2);
+      node.setAttribute('rx',Math.abs(coords[2]-coords[0])/2); node.setAttribute('ry',Math.abs(coords[3]-coords[1])/2);
+    } else if (item.kind === 'line' && coords.length >= 4) {
+      node = document.createElementNS(svg.namespaceURI,'polyline');
+      node.setAttribute('points', Array.from({length:Math.floor(coords.length/2)},(_,i)=>`${coords[i*2]},${coords[i*2+1]}`).join(' '));
+      node.setAttribute('fill','none');
+    } else if (item.kind === 'polygon' && coords.length >= 6) {
+      node = document.createElementNS(svg.namespaceURI,'polygon');
+      node.setAttribute('points', Array.from({length:Math.floor(coords.length/2)},(_,i)=>`${coords[i*2]},${coords[i*2+1]}`).join(' '));
+    } else if (item.kind === 'text' && coords.length >= 2) {
+      node = document.createElementNS(svg.namespaceURI,'text'); node.setAttribute('x',coords[0]); node.setAttribute('y',coords[1]); node.textContent = String(opts.text || '');
+    }
+    if (!node) return;
+    node.setAttribute('stroke', String(opts.outline || opts.fill || 'currentColor'));
+    if (item.kind !== 'line' && item.kind !== 'text') node.setAttribute('fill', String(opts.fill || 'transparent'));
+    if (item.kind === 'text') { node.setAttribute('fill', String(opts.fill || 'currentColor')); node.setAttribute('stroke','none'); }
+    svg.appendChild(node);
+  });
+  return svg;
+}
+
+function createTkinterLiteWidget(widget, radioGroups) {
+  const options = widget.options || {};
+  const text = options.text ?? '';
+  let element;
+  if (widget.type === 'Label' || widget.type === 'Message') {
+    element = document.createElement('div'); element.className='tk-lite-label'; element.textContent=String(text);
+  } else if (widget.type === 'Button') {
+    element = document.createElement('button'); element.type='button'; element.className='tk-lite-button'; element.textContent=String(text || 'Button');
+    element.addEventListener('click',()=>sendTkinterLiteEvent(widget.id));
+  } else if (widget.type === 'Entry' || widget.type === 'Spinbox' || widget.type === 'Combobox') {
+    element = document.createElement('input'); element.className='tk-lite-entry'; element.value=String(options._value ?? '');
+    if (options.show) element.type='password';
+  } else if (widget.type === 'Text') {
+    element=document.createElement('textarea'); element.className='tk-lite-text'; element.value=String(options._value ?? '');
+  } else if (widget.type === 'Checkbutton') {
+    const label=document.createElement('label'); label.className='tk-lite-choice';
+    element=document.createElement('input'); element.type='checkbox';
+    const onvalue=options.onvalue ?? 1, offvalue=options.offvalue ?? 0;
+    element.checked=String(options._variableValue)===String(onvalue); element.dataset.tkOnvalue=String(onvalue); element.dataset.tkOffvalue=String(offvalue);
+    label.append(element,document.createTextNode(String(text || ''))); element.addEventListener('change',()=>sendTkinterLiteEvent(widget.id));
+    element.__tkWrapper=label;
+  } else if (widget.type === 'Radiobutton') {
+    const label=document.createElement('label'); label.className='tk-lite-choice';
+    element=document.createElement('input'); element.type='radio';
+    const group = String(options.variable ?? widget.parent ?? 'radio');
+    if (!radioGroups.has(group)) radioGroups.set(group,`tk-${radioGroups.size+1}`);
+    element.name=radioGroups.get(group); element.value=String(options.value ?? 1); element.checked=String(options._variableValue)===String(options.value ?? 1);
+    label.append(element,document.createTextNode(String(text || ''))); element.addEventListener('change',()=>{if(element.checked) sendTkinterLiteEvent(widget.id);});
+    element.__tkWrapper=label;
+  } else if (widget.type === 'Scale') {
+    element=document.createElement('input'); element.type='range'; element.className='tk-lite-scale';
+    element.min=String(options.from_ ?? 0); element.max=String(options.to ?? 100); element.step=String(options.resolution ?? 1); element.value=String(options._value ?? options.from_ ?? 0);
+    if (widget.hasCommand) element.addEventListener('change',()=>sendTkinterLiteEvent(widget.id));
+  } else if (widget.type === 'Listbox') {
+    element=document.createElement('select'); element.className='tk-lite-listbox'; element.multiple=String(options.selectmode || '').includes('multiple');
+    (widget.items || []).forEach(item=>{const option=document.createElement('option'); option.textContent=String(item); element.appendChild(option);});
+  } else if (widget.type === 'Canvas') {
+    element=createTkinterLiteCanvas(widget);
+  } else if (widget.type === 'Separator') {
+    element=document.createElement('hr'); element.className='tk-lite-separator';
+  } else if (widget.type === 'Progressbar') {
+    element=document.createElement('progress'); element.className='tk-lite-progress'; element.max=Number(options.maximum || 100); element.value=Number(options.value || options._variableValue || 0);
+  } else if (widget.type === 'LabelFrame') {
+    element=document.createElement('fieldset'); element.className='tk-lite-frame tk-lite-labelframe'; const legend=document.createElement('legend'); legend.textContent=String(text || ''); element.appendChild(legend);
+  } else {
+    element=document.createElement('div'); element.className='tk-lite-frame';
+  }
+  element.dataset.tkWidgetId=widget.id;
+  if (options.state === 'disabled') element.disabled=true;
+  if (options.cursor) element.style.cursor=String(options.cursor);
+  applyTkinterLiteWidgetStyle(element.__tkWrapper || element, widget);
+  return element.__tkWrapper || element;
+}
+
+function renderTkinterLite(snapshot) {
+  tkinterLiteSnapshot = typeof snapshot === 'string' ? JSON.parse(snapshot) : (snapshot || {});
+  tkinterLiteActive = true;
+  const runtime = $('#tkinterRuntime');
+  if (!runtime) return;
+  runtime.hidden = false;
+  $('#previewFrame')?.setAttribute('hidden','');
+  if ($('#pythonRuntime')) $('#pythonRuntime').hidden = true;
+  if ($('#previewTitle')) $('#previewTitle').textContent = 'Tkinter Web Lite';
+  if ($('#runtimeBadge')) $('#runtimeBadge').textContent = 'Tkinter Web Lite · Pyodide';
+  const geometry = String(tkinterLiteSnapshot.geometry || '');
+  const match = geometry.match(/^(\d+)x(\d+)/);
+  const windowNode = document.createElement('section'); windowNode.className='tk-lite-window';
+  if (match) { windowNode.style.width=`min(100%, ${Math.max(240,Number(match[1]))}px)`; windowNode.style.minHeight=`min(70vh, ${Math.max(160,Number(match[2]))}px)`; }
+  const titlebar=document.createElement('div'); titlebar.className='tk-lite-titlebar'; titlebar.innerHTML='<span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>';
+  const title=document.createElement('strong'); title.textContent=String(tkinterLiteSnapshot.title || 'Tkinter Web Lite'); titlebar.appendChild(title);
+  const body=document.createElement('div'); body.className='tk-lite-body';
+  windowNode.append(titlebar,body); runtime.replaceChildren(windowNode);
+  const widgets=(tkinterLiteSnapshot.widgets || []).filter(widget=>!['Tk','Toplevel'].includes(widget.type));
+  const byParent=new Map(); widgets.forEach(widget=>{const key=widget.parent || '__root__'; if(!byParent.has(key)) byParent.set(key,[]); byParent.get(key).push(widget);});
+  const radioGroups=new Map();
+  const renderChildren=(parentId,parentNode)=>{
+    const children=byParent.get(parentId) || [];
+    if (!children.length) return;
+    const usesGrid=children.some(child=>child.manager==='grid');
+    const usesPlace=children.some(child=>child.manager==='place');
+    if (usesGrid) {
+      parentNode.classList.add('tk-lite-grid');
+      const maxColumn=Math.max(0,...children.map(child=>Number(child.layout?.column || 0)+Number(child.layout?.columnspan || 1)-1));
+      parentNode.style.gridTemplateColumns=`repeat(${maxColumn+1}, minmax(0,1fr))`;
+    } else if (usesPlace) parentNode.classList.add('tk-lite-place');
+    else {
+      parentNode.classList.add('tk-lite-pack');
+      if (children.some(child => ['left','right'].includes(String(child.layout?.side || '').toLowerCase()))) parentNode.classList.add('tk-lite-pack-row');
+    }
+    children.forEach(widget=>{
+      const node=createTkinterLiteWidget(widget,radioGroups); parentNode.appendChild(node);
+      const childHost=node.matches('fieldset') ? node : (['Frame','PanedWindow','LabelFrame'].includes(widget.type) ? node : null);
+      if (childHost) renderChildren(widget.id,childHost);
+    });
+  };
+  const rootWidget=(tkinterLiteSnapshot.widgets || []).find(widget=>widget.type==='Tk');
+  if (rootWidget?.options) {
+    const rootBg = rootWidget.options.bg ?? rootWidget.options.background;
+    const rootFg = rootWidget.options.fg ?? rootWidget.options.foreground;
+    if (rootBg) body.style.background = String(rootBg);
+    if (rootFg) body.style.color = String(rootFg);
+  }
+  renderChildren(rootWidget?.id || '__root__', body);
+  (tkinterLiteSnapshot.messages || []).slice(-3).forEach(message=>{
+    const alert=document.createElement('div'); alert.className=`tk-lite-message ${message.kind || 'info'}`; alert.setAttribute('role','status');
+    const strong=document.createElement('strong'); strong.textContent=String(message.title || 'Mensagem'); const p=document.createElement('p'); p.textContent=String(message.message || ''); alert.append(strong,p); body.appendChild(alert);
+  });
+}
+
+
 function createPythonWorker() {
   if (pythonWorker) return pythonWorker;
   const workerSource = `
     let pyodide = null;
     let booting = null;
+    let tkinterInstalled = false;
     const BASE = ${JSON.stringify(PYODIDE_BASE)};
+    const TKINTER_BOOTSTRAP = ${JSON.stringify(TKINTER_LITE_PY)};
     async function ensurePyodide() {
       if (pyodide) return pyodide;
       if (!booting) booting = (async () => {
@@ -3319,26 +3927,60 @@ function createPythonWorker() {
       })();
       return booting;
     }
+    async function ensureTkinterLite(runtime) {
+      if (!tkinterInstalled) {
+        await runtime.runPythonAsync(TKINTER_BOOTSTRAP);
+        tkinterInstalled = true;
+      } else {
+        await runtime.runPythonAsync('__ee_tk_reset()');
+      }
+    }
+    function snapshotTkinter(runtime, runId) {
+      const snapshot = runtime.runPython('__ee_tk_snapshot()');
+      self.postMessage({type:'tkinter', runId, snapshot:String(snapshot)});
+    }
     self.onmessage = async event => {
-      if (event.data?.type !== 'run') return;
+      const type = event.data?.type;
+      if (type === 'tk-event') {
+        const runId = event.data.runId;
+        try {
+          const runtime = await ensurePyodide();
+          runtime.globals.set('__ee_tk_values_json', JSON.stringify(event.data.values || {}));
+          runtime.globals.set('__ee_tk_widget_id', String(event.data.widgetId || ''));
+          await runtime.runPythonAsync('__ee_tk_apply_values(__ee_tk_values_json)\n__ee_tk_invoke(__ee_tk_widget_id)');
+          snapshotTkinter(runtime, runId);
+          self.postMessage({type:'status', runId, status:'ready', text:'Interface atualizada'});
+        } catch (error) {
+          self.postMessage({type:'error', runId, text:error?.message || String(error)});
+        }
+        return;
+      }
+      if (type !== 'run') return;
       const runId = event.data.runId;
+      const code = event.data.code || '';
+      const useTkinter = event.data.tkinter === true;
       try {
         const runtime = await ensurePyodide();
-        await runtime.loadPackagesFromImports(event.data.code || '');
+        if (useTkinter) await ensureTkinterLite(runtime);
+        const packageScan = useTkinter
+          ? code.replace(/^\s*(?:import\s+tkinter.*|from\s+tkinter(?:\.\w+)?\s+import.*)$/gm, '')
+          : code;
+        await runtime.loadPackagesFromImports(packageScan);
         runtime.setStdout({ batched: text => self.postMessage({type:'stdout', runId, text}) });
         runtime.setStderr({ batched: text => self.postMessage({type:'stderr', runId, text}) });
         const stdinLines = String(event.data.stdin || '').split(/\\r?\\n/);
         let stdinIndex = 0;
         runtime.setStdin({ stdin: () => stdinIndex < stdinLines.length ? stdinLines[stdinIndex++] : null });
-        self.postMessage({type:'status', runId, status:'running', text:'Executando…'});
-        const result = await runtime.runPythonAsync(event.data.code || '');
+        self.postMessage({type:'status', runId, status:'running', text:useTkinter ? 'Montando interface Tkinter…' : 'Executando…'});
+        const result = await runtime.runPythonAsync(code);
         if (result !== undefined && result !== null && String(result) !== 'undefined') {
           self.postMessage({type:'result', runId, text:String(result)});
         }
-        self.postMessage({type:'done', runId});
+        if (useTkinter) snapshotTkinter(runtime, runId);
+        self.postMessage({type:'done', runId, tkinter:useTkinter});
       } catch (error) {
         self.postMessage({type:'error', runId, text:error?.message || String(error)});
-        self.postMessage({type:'done', runId, failed:true});
+        self.postMessage({type:'done', runId, failed:true, tkinter:useTkinter});
       }
     };
   `;
@@ -3358,19 +4000,28 @@ function runPythonPlayground() {
   state.playground = { ...pg };
   state.playgroundLang = 'python';
   saveState();
-  clearConsole('Preparando execução Python…');
+  tkinterLiteActive = pythonUsesTkinter(pg.python);
+  if (!tkinterLiteActive) {
+    tkinterLiteSnapshot = null;
+    if ($('#tkinterRuntime')) $('#tkinterRuntime').hidden = true;
+  }
+  clearConsole(tkinterLiteActive ? 'Tkinter Web Lite: mensagens, prints e erros continuam aparecendo aqui.' : 'Preparando execução Python…');
   pythonRunning = true;
   pythonRunStartedAt = performance.now();
   pythonRunId += 1;
   syncEditorMode();
-  setRunStatus(pythonWorker ? 'Executando Python…' : 'Carregando Python…', 'running');
+  setRunStatus(pythonWorker ? (tkinterLiteActive ? 'Executando Tkinter…' : 'Executando Python…') : 'Carregando Python…', 'running');
   if ($('#pythonRuntimeText')) {
     $('#pythonRuntimeText').textContent = pythonWorker
       ? 'Executando no Worker isolado…'
       : 'Carregando o runtime Python. A primeira execução é a mais demorada.';
   }
+  if (tkinterLiteActive && $('#tkinterRuntime')) {
+    $('#tkinterRuntime').hidden = false;
+    $('#tkinterRuntime').innerHTML = '<div class="tk-lite-loading"><span class="runtime-dot"></span><strong>Preparando Tkinter Web Lite…</strong><p>A interface aparecerá aqui quando o código terminar de montar a janela.</p></div>';
+  }
   try {
-    createPythonWorker().postMessage({ type:'run', runId:pythonRunId, code:pg.python, stdin:state.pythonStdin || '' });
+    createPythonWorker().postMessage({ type:'run', runId:pythonRunId, code:pg.python, stdin:state.pythonStdin || '', tkinter:tkinterLiteActive });
   } catch (error) {
     appendConsole('error', error.message || String(error));
     finishPythonRun(true);
@@ -3388,6 +4039,10 @@ function handlePythonWorkerMessage(event) {
   if (message.type === 'stdout') appendConsole('log', message.text || '');
   if (message.type === 'stderr') appendConsole('warn', message.text || '');
   if (message.type === 'result') appendConsole('result', `↳ ${message.text}`);
+  if (message.type === 'tkinter') {
+    try { renderTkinterLite(message.snapshot); }
+    catch (error) { appendConsole('error', `Tkinter Web Lite: ${error.message || String(error)}`); }
+  }
   if (message.type === 'error') appendConsole('error', cleanPythonError(message.text || 'Erro desconhecido'));
   if (message.type === 'done') finishPythonRun(Boolean(message.failed));
 }
@@ -3402,11 +4057,11 @@ function finishPythonRun(failed = false) {
   pythonRunning = false;
   syncEditorMode();
   const time = duration < 1000 ? `${Math.round(duration)} ms` : `${(duration / 1000).toFixed(1)} s`;
-  setRunStatus(failed ? 'Erro na execução' : `Concluído · ${time}`, failed ? 'error' : 'success');
+  setRunStatus(failed ? 'Erro na execução' : `${tkinterLiteActive ? 'Interface pronta' : 'Concluído'} · ${time}`, failed ? 'error' : 'success');
   if ($('#pythonRuntimeText')) {
     $('#pythonRuntimeText').textContent = failed
       ? 'A execução terminou com erro. Leia o terminal para corrigir o código.'
-      : 'Execução concluída. Edite o código e execute novamente quando quiser.';
+      : (tkinterLiteActive ? 'Interface Tkinter renderizada na área de Resultado.' : 'Execução concluída. Edite o código e execute novamente quando quiser.');
   }
 }
 
@@ -3900,7 +4555,7 @@ function applyTheme(theme, { animate = false } = {}) {
   root.dataset.theme = theme;
   themeToggle?.setAttribute('aria-label', theme === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro');
   const meta = $('meta[name="theme-color"]');
-  if (meta) meta.content = theme === 'dark' ? '#08090a' : '#d8c1a6';
+  if (meta) meta.content = theme === 'dark' ? '#08090a' : '#f5efe6';
   syncBrandThemeAssets(theme, shouldAnimate);
 
   if (shouldAnimate) {
