@@ -3287,9 +3287,10 @@ function handlePlaygroundMessage(event) {
 }
 
 async function runResultFullscreen() {
-  const target = activeLang === 'python' ? $('#consolePanel') : $('#previewStage');
+  const pythonTkinter = activeLang === 'python' && pythonUsesTkinter($('#codeEditor')?.value || pg.python || '');
+  const target = activeLang === 'python' ? (pythonTkinter ? $('#previewStage') : $('#consolePanel')) : $('#previewStage');
   if (!target) return;
-  if (activeLang === 'python') setConsoleCollapsed(false);
+  if (activeLang === 'python' && !pythonTkinter) setConsoleCollapsed(false);
   target.classList.add('result-only-target');
   runPlayground();
   showResultFullscreenHint(target);

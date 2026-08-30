@@ -1,4 +1,4 @@
-# Epoch Education — histórico completo v1 a v49
+# Epoch Education — histórico completo v1 a v50
 
 Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitável/funcional, ainda em evolução; **RELEASE** = marco completo/estável no histórico.
 
@@ -51,3 +51,4 @@ Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitáve
 - **v47 — RELEASE** — Auditoria geral: restauração do Tkinter Web Lite no Playground Python, refinamento de acessibilidade, mobile e Light Mode, correções de PWA e Supabase, com standalone e validações atualizados.
 - **v48 — RELEASE** — Feedbacks anônimos com banco Supabase dedicado, RLS de inserção pública sem leitura, formulário responsivo no site, cache/PWA e standalone atualizados.
 - **v49 — RELEASE** — Alteração completa da identidade textual para Epoch Education, preservando EE + </>, dados, funcionalidades, compatibilidade de armazenamento, PWA e standalone; publicação final validada pela suíte de qualidade.
+- **v50 — RELEASE** — Correções da auditoria: fullscreen visual do Tkinter, fontes monoespaçadas, feedback via Edge Function com rate limit e bloqueio de INSERT público, Supabase v50 e republicação após renome do repositório.

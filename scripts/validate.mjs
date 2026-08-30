@@ -86,7 +86,7 @@ if (!manifest.name || !manifest.start_url || !Array.isArray(manifest.icons) || m
 else ok('Manifest PWA verificado');
 
 const versionSources = [html, read('app.js'), read('platform-features.js'), read('bootstrap.js'), read('service-worker.js')].join('\n');
-const staleVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1])).filter(version => version < 49);
+const staleVersionRefs = [...versionSources.matchAll(/\?v=(\d+)/g)].map(match => Number(match[1])).filter(version => version < 50);
 if (staleVersionRefs.length) fail(`Referências de cache antigas nos arquivos públicos: ${[...new Set(staleVersionRefs)].join(', ')}`); else ok('Referências de cache dos arquivos públicos atualizadas');
 
 for (const breakpoint of ['375px','390px','430px','760px','900px']) if (!css.includes(`max-width:${breakpoint}`) && !css.includes(`max-width: ${breakpoint}`)) fail(`Breakpoint responsivo ausente: ${breakpoint}`);
@@ -123,7 +123,7 @@ if (!appSource.includes("'#f5efe6'")) fail('theme-color claro não acompanha a p
 else ok('Theme color Light Mode alinhado');
 if (!appSource.includes("event?.type === 'hashchange'") || !appSource.includes("heading.focus({ preventScroll:true })")) fail('Foco de navegação SPA não tratado');
 else ok('Foco de navegação SPA verificado');
-if (!/appVersion\s*:\s*49/.test(platformSource)) fail('Versão de backup não atualizada para v49');
+if (!/appVersion\s*:\s*50/.test(platformSource)) fail('Versão de backup não atualizada para v50');
 else ok('Versão de backup atualizada');
 if (!workerSource.includes("request.mode === 'navigate'") || /catch\(\(\) => caches\.match\('\.\/index\.html'\)\)/.test(workerSource)) fail('Fallback offline do Service Worker ainda pode devolver HTML para assets');
 else ok('Fallback PWA separado entre navegação e assets');
@@ -135,12 +135,23 @@ const feedbackSchemaPath = path.join(root,'supabase/feedback-schema.sql');
 const feedbackSchemaSource = fs.existsSync(feedbackSchemaPath) ? read('supabase/feedback-schema.sql') : '';
 if (!html.includes('id="feedbackDialog"') || !html.includes('id="openFeedback"') || !html.includes('id="feedbackForm"')) fail('Interface de feedback ausente');
 else ok('Interface de feedback presente');
-if (!platformSource.includes('EE_FEEDBACK_PROJECT_URL') || !platformSource.includes('sb_publishable_') || !platformSource.includes('/rest/v1/ee_feedback')) fail('Integração pública de feedback incompleta');
+if (!platformSource.includes('EE_FEEDBACK_ENDPOINT') || !platformSource.includes('sb_publishable_') || !platformSource.includes('/functions/v1/submit-feedback')) fail('Integração segura de feedback incompleta');
+else if (platformSource.includes('/rest/v1/ee_feedback')) fail('Frontend ainda possui inserção direta na tabela de feedback');
 else if (/sb_secret_|service_role\s*=|service_role['"]\s*:/i.test(platformSource)) fail('Credencial privilegiada encontrada na integração de feedback');
 else ok('Integração de feedback usa apenas chave publicável');
-if (!feedbackSchemaSource.includes('enable row level security') || !feedbackSchemaSource.includes('grant insert') || !feedbackSchemaSource.includes('revoke all')) fail('Schema de feedback sem proteção RLS/grants mínimos');
-else ok('Schema de feedback protegido por RLS e privilégio mínimo');
+if (!feedbackSchemaSource.includes('enable row level security') || !feedbackSchemaSource.includes('revoke insert') || !feedbackSchemaSource.includes('ee_feedback_rate_limits') || !feedbackSchemaSource.includes('grant execute') || !feedbackSchemaSource.includes('service_role')) fail('Schema de feedback v50 sem RLS/rate limit/privilégio mínimo');
+else ok('Schema de feedback v50 protegido por RLS, Edge Function e rate limit');
 
+
+
+if (!css.includes('--font-mono:') || !css.includes('--mono: var(--font-mono)')) fail('Variáveis de fonte monoespaçada ausentes');
+else ok('Variáveis de fonte monoespaçada definidas');
+if (!appSource.includes("pythonTkinter ? $('#previewStage') : $('#consolePanel')")) fail('Tela cheia do Tkinter ainda aponta para o Console');
+else ok('Tela cheia do Tkinter usa o resultado visual');
+const feedbackFunctionPath = path.join(root,'supabase/functions/submit-feedback/index.ts');
+const feedbackFunctionSource = fs.existsSync(feedbackFunctionPath) ? read('supabase/functions/submit-feedback/index.ts') : '';
+if (!feedbackFunctionSource.includes('p_limit:3') || !feedbackFunctionSource.includes('p_window_seconds:600') || !feedbackFunctionSource.includes('SUPABASE_SECRET_KEYS')) fail('Edge Function de feedback sem rate limit/segredo de backend');
+else ok('Edge Function de feedback com validação e rate limit');
 
 const legacyBrand = 'Enterprise' + ' Educacional';
 for (const file of ['index.html','app.js','platform-features.js','content-data.js','manifest.webmanifest','assets/branding/enterprise-logo-horizontal.svg','assets/branding/enterprise-symbol.svg']) {

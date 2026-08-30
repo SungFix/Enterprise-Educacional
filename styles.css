@@ -39,6 +39,8 @@
   --shell: min(1640px, calc(100vw - 64px));
   --reading: 780px;
   --editor-split: 55%;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --mono: var(--font-mono);
 }
 
 html[data-theme="light"] {

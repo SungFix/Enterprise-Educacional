@@ -1,4 +1,4 @@
-/* Epoch Education — platform features v49
+/* Epoch Education — platform features v50
  * Cloud sync, PWA install/offline, project checks, study history and recovery.
  */
 
@@ -131,7 +131,7 @@ async function buildEnterpriseBackupPayload(savedProjectsOverride) {
     format:'enterprise-educacional-backup',
     version:2,
     exportedAt:new Date().toISOString(),
-    appVersion:49,
+    appVersion:50,
     state:JSON.parse(JSON.stringify(state)),
     savedProjects
   };
@@ -322,7 +322,7 @@ async function initPwaFeature() {
     eeDeferredInstallPrompt = null; renderPwaStatus();
   });
   if ('serviceWorker' in navigator && document.documentElement.dataset.standaloneFile !== 'true' && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./service-worker.js?v=49').catch(() => {});
+    navigator.serviceWorker.register('./service-worker.js?v=50').catch(() => {});
   }
   renderPwaStatus();
 }
@@ -507,6 +507,7 @@ function initPlaygroundRecoveryFeature() {
 }
 
 const EE_FEEDBACK_PROJECT_URL = 'https://xqlbuatjounkpovwggdj.supabase.co';
+const EE_FEEDBACK_ENDPOINT = `${EE_FEEDBACK_PROJECT_URL}/functions/v1/submit-feedback`;
 const EE_FEEDBACK_PUBLIC_KEY = 'sb_publishable_03cXMvbU2fQEqkZ-Z7xI_g_Ji97Txy_';
 const EE_FEEDBACK_COOLDOWN_KEY = 'enterprise-educacional-feedback-last-v1';
 
@@ -551,11 +552,15 @@ async function eeSubmitFeedback(event) {
   if (button) { button.disabled = true; button.textContent = 'Enviando…'; }
   eeSetFeedbackStatus('Enviando feedback…');
   try {
-    const response = await fetch(`${EE_FEEDBACK_PROJECT_URL}/rest/v1/ee_feedback`, {
+    const response = await fetch(EE_FEEDBACK_ENDPOINT, {
       method:'POST',
-      headers:{ 'apikey':EE_FEEDBACK_PUBLIC_KEY, 'Content-Type':'application/json', 'Prefer':'return=minimal' },
-      body:JSON.stringify({ category, rating, message, page:String(location.hash || '#home').slice(0,200), app_version:49 })
+      headers:{ 'apikey':EE_FEEDBACK_PUBLIC_KEY, 'Content-Type':'application/json' },
+      body:JSON.stringify({ category, rating, message, page:String(location.hash || '#home').slice(0,200), website:honeypot })
     });
+    if (response.status === 429) {
+      eeSetFeedbackStatus('Limite de envios atingido. Aguarde alguns minutos e tente novamente.', 'warning');
+      return;
+    }
     if (!response.ok) {
       const detail = await response.text().catch(() => '');
       throw new Error(detail || `Erro HTTP ${response.status}`);
