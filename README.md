@@ -379,7 +379,7 @@ Esta rodada fecha os principais pontos de melhoria que ainda faltavam sem transf
 - Search index passou a armazenar textos normalizados previamente, reduzindo trabalho repetido durante a digitação.
 - CI/validação agora também verifica IDs de exercícios/projetos/desafios, vínculos de exercícios com aulas, manifest PWA, versões de cache, breakpoints principais e ausência de `overflow-x:hidden` global usado para mascarar bugs.
 - Gerados relatórios `reports/CONTENT_AUDIT_V44.md` e `reports/QA_V44.md`.
-- Criado `scripts/build-standalone.py` para reconstruir de forma reproduzível o `Enterprise-Educacional.html` autossuficiente.
+- Criado `scripts/build-standalone.py` para reconstruir de forma reproduzível o `Epoch-Education.html` autossuficiente.
 
 A sincronização em nuvem continua dependendo de um projeto Supabase configurado pelo proprietário. A v44 não inclui credenciais privadas nem um backend de terceiros pré-configurado.
 
