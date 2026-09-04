@@ -3045,6 +3045,21 @@ function initPlayground() {
       $('#codeEditor').focus();
     }
   });
+  $('#clearAllEditors').addEventListener('click', () => {
+    syncPlaygroundBuffer();
+    const languages = ['html', 'css', 'js', 'python'];
+    const hasCode = languages.some(lang => String(pg[lang] || '').trim());
+    if (hasCode && !confirm('Limpar todos os editores? HTML, CSS, JavaScript e Python serão apagados.')) return;
+    if (hasCode) savePlaygroundSnapshot('Antes de limpar todos os editores');
+    languages.forEach(lang => { pg[lang] = ''; });
+    state.playground = { ...pg };
+    state.playgroundLang = activeLang;
+    saveState();
+    updateEditor();
+    runPlayground();
+    $('#codeEditor').focus();
+    showToast('Todos os editores foram limpos.');
+  });
   $('#copyCode').addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText($('#codeEditor').value);
