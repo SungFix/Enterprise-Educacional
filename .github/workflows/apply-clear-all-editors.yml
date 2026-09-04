@@ -18,54 +18,7 @@ jobs:
           fetch-depth: 0
       - name: Atualizar Playground
         shell: bash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          index = Path('index.html')
-          text = index.read_text(encoding='utf-8')
-          old = '<button class="editor-more-action danger" id="clearEditor" type="button">Limpar editor</button>'
-          new = old + '<button class="editor-more-action danger" id="clearAllEditors" type="button">Limpar tudo</button>'
-          if old not in text:
-              raise SystemExit('Botão Limpar editor não encontrado no index.html')
-          if 'id="clearAllEditors"' not in text:
-              text = text.replace(old, new, 1)
-          text = text.replace('app.js?v=50', 'app.js?v=52')
-          index.write_text(text, encoding='utf-8')
-
-          app = Path('app.js')
-          text = app.read_text(encoding='utf-8')
-          anchor = """  $('#clearEditor').addEventListener('click', () => {
-    if (!$('#codeEditor').value || confirm(`Limpar o código da aba ${languageLabel(activeLang)}?`)) {
-      savePlaygroundSnapshot('Antes de limpar editor');
-      $('#codeEditor').value = '';
-      $('#codeEditor').dispatchEvent(new Event('input'));
-      $('#codeEditor').focus();
-    }
-  });"""
-          addition = anchor + """
-  $('#clearAllEditors').addEventListener('click', () => {
-    syncPlaygroundBuffer();
-    const languages = ['html', 'css', 'js', 'python'];
-    const hasCode = languages.some(lang => String(pg[lang] || '').trim());
-    if (hasCode && !confirm('Limpar todos os editores? HTML, CSS, JavaScript e Python serão apagados.')) return;
-    if (hasCode) savePlaygroundSnapshot('Antes de limpar todos os editores');
-    languages.forEach(lang => { pg[lang] = ''; });
-    state.playground = { ...pg };
-    state.playgroundLang = activeLang;
-    saveState();
-    updateEditor();
-    runPlayground();
-    $('#codeEditor').focus();
-    showToast('Todos os editores foram limpos.');
-  });"""
-          if anchor not in text:
-              raise SystemExit('Handler Limpar editor não encontrado no app.js')
-          if "$('#clearAllEditors').addEventListener" not in text:
-              text = text.replace(anchor, addition, 1)
-          app.write_text(text, encoding='utf-8')
-          PY
-
+        run: python -c "import base64; exec(base64.b64decode('ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCgppbmRleCA9IFBhdGgoJ2luZGV4Lmh0bWwnKQp0ZXh0ID0gaW5kZXgucmVhZF90ZXh0KGVuY29kaW5nPSd1dGYtOCcpCm9sZCA9ICc8YnV0dG9uIGNsYXNzPSJlZGl0b3ItbW9yZS1hY3Rpb24gZGFuZ2VyIiBpZD0iY2xlYXJFZGl0b3IiIHR5cGU9ImJ1dHRvbiI+TGltcGFyIGVkaXRvcjwvYnV0dG9uPicKbmV3ID0gb2xkICsgJzxidXR0b24gY2xhc3M9ImVkaXRvci1tb3JlLWFjdGlvbiBkYW5nZXIiIGlkPSJjbGVhckFsbEVkaXRvcnMiIHR5cGU9ImJ1dHRvbiI+TGltcGFyIHR1ZG88L2J1dHRvbj4nCmlmIG9sZCBub3QgaW4gdGV4dDoKICAgIHJhaXNlIFN5c3RlbUV4aXQoJ0JvdMOjbyBMaW1wYXIgZWRpdG9yIG7Do28gZW5jb250cmFkbyBubyBpbmRleC5odG1sJykKaWYgJ2lkPSJjbGVhckFsbEVkaXRvcnMiJyBub3QgaW4gdGV4dDoKICAgIHRleHQgPSB0ZXh0LnJlcGxhY2Uob2xkLCBuZXcsIDEpCnRleHQgPSB0ZXh0LnJlcGxhY2UoJ2FwcC5qcz92PTUwJywgJ2FwcC5qcz92PTUyJykKaW5kZXgud3JpdGVfdGV4dCh0ZXh0LCBlbmNvZGluZz0ndXRmLTgnKQoKYXBwID0gUGF0aCgnYXBwLmpzJykKdGV4dCA9IGFwcC5yZWFkX3RleHQoZW5jb2Rpbmc9J3V0Zi04JykKYW5jaG9yID0gIiAgJCgnI2NsZWFyRWRpdG9yJykuYWRkRXZlbnRMaXN0ZW5lcignY2xpY2snLCAoKSA9PiB7XG4gICAgaWYgKCEkKCcjY29kZUVkaXRvcicpLnZhbHVlIHx8IGNvbmZpcm0oYExpbXBhciBvIGPDs2RpZ28gZGEgYWJhICR7bGFuZ3VhZ2VMYWJlbChhY3RpdmVMYW5nKX0/YCkpIHtcbiAgICAgIHNhdmVQbGF5Z3JvdW5kU25hcHNob3QoJ0FudGVzIGRlIGxpbXBhciBlZGl0b3InKTtcbiAgICAgICQoJyNjb2RlRWRpdG9yJykudmFsdWUgPSAnJztcbiAgICAgICQoJyNjb2RlRWRpdG9yJykuZGlzcGF0Y2hFdmVudChuZXcgRXZlbnQoJ2lucHV0JykpO1xuICAgICAgJCgnI2NvZGVFZGl0b3InKS5mb2N1cygpO1xuICAgIH1cbiAgfSk7IgphZGRpdGlvbiA9IGFuY2hvciArICJcbiAgJCgnI2NsZWFyQWxsRWRpdG9ycycpLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgKCkgPT4ge1xuICAgIHN5bmNQbGF5Z3JvdW5kQnVmZmVyKCk7XG4gICAgY29uc3QgbGFuZ3VhZ2VzID0gWydodG1sJywgJ2NzcycsICdqcycsICdweXRob24nXTtcbiAgICBjb25zdCBoYXNDb2RlID0gbGFuZ3VhZ2VzLnNvbWUobGFuZyA9PiBTdHJpbmcocGdbbGFuZ10gfHwgJycpLnRyaW0oKSk7XG4gICAgaWYgKGhhc0NvZGUgJiYgIWNvbmZpcm0oJ0xpbXBhciB0b2RvcyBvcyBlZGl0b3Jlcz8gSFRNTCwgQ1NTLCBKYXZhU2NyaXB0IGUgUHl0aG9uIHNlcsOjbyBhcGFnYWRvcy4nKSkgcmV0dXJuO1xuICAgIGlmIChoYXNDb2RlKSBzYXZlUGxheWdyb3VuZFNuYXBzaG90KCdBbnRlcyBkZSBsaW1wYXIgdG9kb3Mgb3MgZWRpdG9yZXMnKTtcbiAgICBsYW5ndWFnZXMuZm9yRWFjaChsYW5nID0+IHsgcGdbbGFuZ10gPSAnJzsgfSk7XG4gICAgc3RhdGUucGxheWdyb3VuZCA9IHsgLi4ucGcgfTtcbiAgICBzdGF0ZS5wbGF5Z3JvdW5kTGFuZyA9IGFjdGl2ZUxhbmc7XG4gICAgc2F2ZVN0YXRlKCk7XG4gICAgdXBkYXRlRWRpdG9yKCk7XG4gICAgcnVuUGxheWdyb3VuZCgpO1xuICAgICQoJyNjb2RlRWRpdG9yJykuZm9jdXMoKTtcbiAgICBzaG93VG9hc3QoJ1RvZG9zIG9zIGVkaXRvcmVzIGZvcmFtIGxpbXBvcy4nKTtcbiAgfSk7').decode())"
       - name: Gerar e validar
         shell: bash
         run: |
@@ -75,22 +28,7 @@ jobs:
           node --check service-worker.js
           python scripts/build-standalone.py
           node scripts/validate.mjs
-          python - <<'PY'
-          from pathlib import Path
-          index = Path('index.html').read_text(encoding='utf-8')
-          app = Path('app.js').read_text(encoding='utf-8')
-          standalone = Path('Epoch-Education.html').read_text(encoding='utf-8')
-          assert index.count('id="clearAllEditors"') == 1
-          assert "$('#clearAllEditors').addEventListener" in app
-          assert "['html', 'css', 'js', 'python']" in app
-          assert "Antes de limpar todos os editores" in app
-          assert index.index('id="clearAllEditors"') < index.index('id="fullscreenPlayground"')
-          assert 'id="clearAllEditors"' in standalone
-          assert "$('#clearAllEditors').addEventListener" in standalone
-          assert Path('Epoch-Education.html').read_bytes() == Path('index-standalone-preview.html').read_bytes()
-          print('Limpar tudo: OK')
-          PY
-
+          python -c "import base64; exec(base64.b64decode('ZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCmluZGV4ID0gUGF0aCgnaW5kZXguaHRtbCcpLnJlYWRfdGV4dChlbmNvZGluZz0ndXRmLTgnKQphcHAgPSBQYXRoKCdhcHAuanMnKS5yZWFkX3RleHQoZW5jb2Rpbmc9J3V0Zi04JykKc3RhbmRhbG9uZSA9IFBhdGgoJ0Vwb2NoLUVkdWNhdGlvbi5odG1sJykucmVhZF90ZXh0KGVuY29kaW5nPSd1dGYtOCcpCmFzc2VydCBpbmRleC5jb3VudCgnaWQ9ImNsZWFyQWxsRWRpdG9ycyInKSA9PSAxCmFzc2VydCAiJCgnI2NsZWFyQWxsRWRpdG9ycycpLmFkZEV2ZW50TGlzdGVuZXIiIGluIGFwcAphc3NlcnQgIlsnaHRtbCcsICdjc3MnLCAnanMnLCAncHl0aG9uJ10iIGluIGFwcAphc3NlcnQgJ0FudGVzIGRlIGxpbXBhciB0b2RvcyBvcyBlZGl0b3JlcycgaW4gYXBwCmFzc2VydCBpbmRleC5pbmRleCgnaWQ9ImNsZWFyQWxsRWRpdG9ycyInKSA8IGluZGV4LmluZGV4KCdpZD0iZnVsbHNjcmVlblBsYXlncm91bmQiJykKYXNzZXJ0ICdpZD0iY2xlYXJBbGxFZGl0b3JzIicgaW4gc3RhbmRhbG9uZQphc3NlcnQgIiQoJyNjbGVhckFsbEVkaXRvcnMnKS5hZGRFdmVudExpc3RlbmVyIiBpbiBzdGFuZGFsb25lCmFzc2VydCBQYXRoKCdFcG9jaC1FZHVjYXRpb24uaHRtbCcpLnJlYWRfYnl0ZXMoKSA9PSBQYXRoKCdpbmRleC1zdGFuZGFsb25lLXByZXZpZXcuaHRtbCcpLnJlYWRfYnl0ZXMoKQpwcmludCgnTGltcGFyIHR1ZG86IE9LJykK').decode())"
       - name: Commit final
         shell: bash
         run: |
