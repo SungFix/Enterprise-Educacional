@@ -1,6 +1,98 @@
 const $ = (selector, scope = document) => scope.querySelector(selector);
 const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
 
+
+let eeActionDialogResolve = null;
+let eeActionDialogMode = 'confirm';
+let eeActionDialogPreviousFocus = null;
+
+function ensureEeActionDialog() {
+  let dialog = $('#eeActionDialog');
+  if (dialog) return dialog;
+  dialog = document.createElement('dialog');
+  dialog.id = 'eeActionDialog';
+  dialog.className = 'saved-code-dialog';
+  dialog.style.width = 'min(560px, calc(100vw - 28px))';
+  dialog.setAttribute('aria-labelledby', 'eeActionDialogTitle');
+  dialog.setAttribute('aria-describedby', 'eeActionDialogMessage');
+  dialog.innerHTML = `<div class="saved-code-modal">
+    <div class="saved-code-dialog-head"><div><span class="detail-kicker" id="eeActionDialogKicker">Confirmação</span><strong id="eeActionDialogTitle">Confirmar ação</strong><p id="eeActionDialogMessage"></p></div><button class="icon-button" id="eeActionDialogClose" type="button" aria-label="Fechar"><svg class="ui-icon"><use href="#icon-close"></use></svg></button></div>
+    <div class="saved-code-dialog-body" id="eeActionDialogBody" hidden><label class="saved-code-name"><span id="eeActionDialogInputLabel">Valor</span><input id="eeActionDialogInput" type="text" autocomplete="off" /></label></div>
+    <div class="saved-code-dialog-actions"><span></span><span></span><button class="button secondary" id="eeActionDialogCancel" type="button">Cancelar</button><button class="button primary" id="eeActionDialogConfirm" type="button">Confirmar</button></div>
+  </div>`;
+  document.body.append(dialog);
+
+  const finish = result => {
+    if (!dialog.open) return;
+    const resolve = eeActionDialogResolve;
+    eeActionDialogResolve = null;
+    dialog.close();
+    const previous = eeActionDialogPreviousFocus;
+    eeActionDialogPreviousFocus = null;
+    if (previous?.isConnected) requestAnimationFrame(() => previous.focus({ preventScroll:true }));
+    resolve?.(result);
+  };
+  dialog._eeFinish = finish;
+  $('#eeActionDialogClose', dialog)?.addEventListener('click', () => finish(eeActionDialogMode === 'prompt' ? null : false));
+  $('#eeActionDialogCancel', dialog)?.addEventListener('click', () => finish(eeActionDialogMode === 'prompt' ? null : false));
+  $('#eeActionDialogConfirm', dialog)?.addEventListener('click', () => {
+    const input = $('#eeActionDialogInput', dialog);
+    finish(eeActionDialogMode === 'prompt' ? (input?.value ?? '') : true);
+  });
+  $('#eeActionDialogInput', dialog)?.addEventListener('keydown', event => {
+    if (event.key === 'Enter') { event.preventDefault(); $('#eeActionDialogConfirm', dialog)?.click(); }
+  });
+  dialog.addEventListener('cancel', event => {
+    event.preventDefault();
+    finish(eeActionDialogMode === 'prompt' ? null : false);
+  });
+  dialog.addEventListener('click', event => {
+    if (event.target === dialog) finish(eeActionDialogMode === 'prompt' ? null : false);
+  });
+  return dialog;
+}
+
+function eeOpenActionDialog(options = {}) {
+  const dialog = ensureEeActionDialog();
+  if (dialog.open) dialog._eeFinish?.(eeActionDialogMode === 'prompt' ? null : false);
+  eeActionDialogMode = options.mode === 'prompt' ? 'prompt' : 'confirm';
+  eeActionDialogPreviousFocus = document.activeElement;
+  const tone = options.tone === 'danger' ? 'danger' : 'default';
+  const body = $('#eeActionDialogBody', dialog);
+  const input = $('#eeActionDialogInput', dialog);
+  const confirmButton = $('#eeActionDialogConfirm', dialog);
+  $('#eeActionDialogKicker', dialog).textContent = options.kicker || (tone === 'danger' ? 'Atenção' : (eeActionDialogMode === 'prompt' ? 'Editar' : 'Confirmação'));
+  $('#eeActionDialogTitle', dialog).textContent = options.title || (eeActionDialogMode === 'prompt' ? 'Digite um valor' : 'Confirmar ação');
+  $('#eeActionDialogMessage', dialog).textContent = options.message || '';
+  $('#eeActionDialogCancel', dialog).textContent = options.cancelLabel || 'Cancelar';
+  confirmButton.textContent = options.confirmLabel || (eeActionDialogMode === 'prompt' ? 'Salvar' : 'Confirmar');
+  confirmButton.className = tone === 'danger' ? 'button danger-ghost' : 'button primary';
+  body.hidden = eeActionDialogMode !== 'prompt';
+  if (eeActionDialogMode === 'prompt') {
+    $('#eeActionDialogInputLabel', dialog).textContent = options.inputLabel || 'Valor';
+    input.value = String(options.value ?? '');
+    input.placeholder = options.placeholder || '';
+    input.maxLength = Number(options.maxLength || 120);
+  }
+  return new Promise(resolve => {
+    eeActionDialogResolve = resolve;
+    dialog.showModal();
+    requestAnimationFrame(() => {
+      if (eeActionDialogMode === 'prompt') { input.focus(); input.select(); }
+      else confirmButton.focus();
+    });
+  });
+}
+
+function eeConfirm(message, options = {}) {
+  return eeOpenActionDialog({ ...options, mode:'confirm', message });
+}
+function eePrompt(message, defaultValue = '', options = {}) {
+  return eeOpenActionDialog({ ...options, mode:'prompt', message, value:defaultValue });
+}
+window.eeConfirm = eeConfirm;
+window.eePrompt = eePrompt;
+
 const DATA = window.EE_CONTENT || { courses: [], lessons: [], exercises: [], challenges: [], projects: [], glossary: [] };
 const courses = DATA.courses || [];
 const lessons = DATA.lessons || [];
@@ -1491,7 +1583,7 @@ async function saveCodeFromDialog({ asNew = false } = {}) {
   let target = !asNew && dialog?.dataset.projectId ? all.find(item => item.id === dialog.dataset.projectId) : null;
   const sameName = all.find(item => normalizeText(item.name) === normalizeText(name) && item.id !== target?.id);
   if (sameName) {
-    const overwrite = confirm(`Já existe um projeto chamado “${sameName.name}”. Deseja substituir esse projeto?`);
+    const overwrite = await eeConfirm(`Já existe um projeto chamado “${sameName.name}”. Se continuar, o projeto salvo será substituído.`, { title:'Substituir projeto?', confirmLabel:'Substituir', tone:'danger' });
     if (!overwrite) { setSaveCodeValidation('Escolha outro nome para salvar como um projeto separado.'); return; }
     target = sameName;
   }
@@ -1567,7 +1659,7 @@ async function openSavedCodeProject(id) {
   const hasCurrentCode = allLanguages.some(lang => String(pg[lang] || '').trim());
   if (hasCurrentCode) {
     const savedLabels = project.languages.map(languageLabel).join(', ');
-    const ok = confirm(`Abrir “${project.name}”? Todo o código atualmente aberto no Playground será limpo. Depois, somente ${savedLabels || 'as linguagens salvas'} deste projeto serão carregadas.`);
+    const ok = await eeConfirm(`O código atualmente aberto será limpo. Depois, somente ${savedLabels || 'as linguagens salvas'} de “${project.name}” serão carregadas.`, { title:'Abrir projeto salvo?', confirmLabel:'Abrir projeto' });
     if (!ok) return;
   }
 
@@ -1593,7 +1685,7 @@ async function openSavedCodeProject(id) {
 async function renameSavedCodeProject(id) {
   const project = await getSavedCodeProject(id);
   if (!project) return;
-  const name = prompt('Novo nome do projeto:', project.name)?.trim();
+  const name = (await eePrompt('Digite o novo nome do projeto.', project.name, { title:'Renomear projeto', inputLabel:'Nome do projeto', confirmLabel:'Renomear', maxLength:80 }))?.trim();
   if (!name || name === project.name) return;
   const all = await listSavedCodeProjects();
   if (all.some(item => item.id !== id && normalizeText(item.name) === normalizeText(name))) {
@@ -1616,7 +1708,7 @@ async function duplicateSavedCodeProject(id) {
 async function deleteSavedCodeProject(id) {
   const project = await getSavedCodeProject(id);
   if (!project) return;
-  if (!confirm(`Excluir “${project.name}” dos seus códigos salvos? Essa ação não apaga o código que está aberto no editor.`)) return;
+  if (!await eeConfirm(`“${project.name}” será removido dos seus códigos salvos. O código aberto no editor não será apagado.`, { title:'Excluir projeto?', confirmLabel:'Excluir', tone:'danger' })) return;
   await removeSavedCodeProject(id);
   if (state.playgroundSavedProjectId === id) {
     state.playgroundSavedProjectId = '';
@@ -1782,7 +1874,7 @@ async function importSavedCodeFiles(fileList) {
     }
     if (!languages.length) throw new Error('Nenhum arquivo HTML, CSS, JavaScript ou Python foi encontrado.');
     const defaultName = String(metadata?.name || suggestedName || 'Projeto importado').trim().slice(0,80) || 'Projeto importado';
-    const nameInput = prompt('Nome do projeto importado:', defaultName);
+    const nameInput = await eePrompt('Escolha o nome usado para salvar o projeto importado.', defaultName, { title:'Nome do projeto importado', inputLabel:'Nome do projeto', confirmLabel:'Importar', maxLength:80 });
     if (nameInput === null) return;
     const all = await listSavedCodeProjects(); const requested = nameInput.trim().slice(0,80) || defaultName; const name = all.some(item => normalizeText(item.name) === normalizeText(requested)) ? uniqueSavedCodeName(requested, all) : requested;
     const now = Date.now();
@@ -1823,7 +1915,7 @@ async function restoreEnterpriseBackup(file) {
   try {
     const payload = JSON.parse(await file.text());
     if (payload?.format !== 'enterprise-educacional-backup' || !payload.state || typeof payload.state !== 'object') throw new Error('Este arquivo não é um backup válido do Epoch Education.');
-    if (!confirm('Restaurar este backup? O progresso, notas, histórico e projetos salvos atuais deste navegador serão substituídos.')) return;
+    if (!await eeConfirm('O progresso, notas, histórico e projetos salvos atuais deste navegador serão substituídos.', { title:'Restaurar backup?', confirmLabel:'Restaurar', tone:'danger' })) return;
     localStorage.setItem(storageKey, JSON.stringify(payload.state));
     localStorage.removeItem(legacyStorageKey);
     await replaceSavedCodeProjects(Array.isArray(payload.savedProjects) ? payload.savedProjects : []);
@@ -2864,9 +2956,9 @@ function initPlayground() {
   $('#savedCodesSearch')?.addEventListener('input', event => renderSavedCodeProjects(event.currentTarget.value));
   $('#savedCodesList')?.addEventListener('click', handleSavedCodeLibraryAction);
   $('#playgroundHistoryToggle')?.addEventListener('click', () => setPlaygroundHistoryOpen($('#playgroundHistoryToggle').getAttribute('aria-expanded') !== 'true'));
-  $('#clearPlaygroundHistory')?.addEventListener('click', () => {
+  $('#clearPlaygroundHistory')?.addEventListener('click', async () => {
     if (!(state.playgroundHistory || []).length) return;
-    if (!confirm('Limpar as versões salvas do Playground?')) return;
+    if (!await eeConfirm('As versões salvas automaticamente no Histórico do Playground serão apagadas.', { title:'Limpar histórico?', confirmLabel:'Limpar histórico', tone:'danger' })) return;
     state.playgroundHistory = []; saveState(); renderPlaygroundHistory();
   });
   $('#presetTrigger')?.addEventListener('click', event => {
@@ -3037,19 +3129,19 @@ function initPlayground() {
     updateEditor();
     runPlayground();
   });
-  $('#clearEditor').addEventListener('click', () => {
-    if (!$('#codeEditor').value || confirm(`Limpar o código da aba ${languageLabel(activeLang)}?`)) {
+  $('#clearEditor').addEventListener('click', async () => {
+    if (!$('#codeEditor').value || await eeConfirm(`O código da aba ${languageLabel(activeLang)} será apagado.`, { title:'Limpar editor?', confirmLabel:'Limpar', tone:'danger' })) {
       savePlaygroundSnapshot('Antes de limpar editor');
       $('#codeEditor').value = '';
       $('#codeEditor').dispatchEvent(new Event('input'));
       $('#codeEditor').focus();
     }
   });
-  $('#clearAllEditors').addEventListener('click', () => {
+  $('#clearAllEditors').addEventListener('click', async () => {
     syncPlaygroundBuffer();
     const languages = ['html', 'css', 'js', 'python'];
     const hasCode = languages.some(lang => String(pg[lang] || '').trim());
-    if (hasCode && !confirm('Limpar todos os editores? HTML, CSS, JavaScript e Python serão apagados.')) return;
+    if (hasCode && !await eeConfirm('HTML, CSS, JavaScript e Python serão apagados de uma vez. Uma versão será mantida no Histórico antes da limpeza.', { title:'Limpar todos os editores?', confirmLabel:'Limpar tudo', tone:'danger' })) return;
     if (hasCode) savePlaygroundSnapshot('Antes de limpar todos os editores');
     languages.forEach(lang => { pg[lang] = ''; });
     state.playground = { ...pg };
@@ -3092,11 +3184,11 @@ function initPlayground() {
     $$('.result-focus-fallback').forEach(element => element.classList.remove('result-focus-fallback','result-only-target'));
     $('#workbench')?.classList.remove('fullscreen-fallback');
   });
-  presetSelect.addEventListener('change', () => {
+  presetSelect.addEventListener('change', async () => {
     const preset = playgroundPresets[presetSelect.value];
     if (!preset) return;
     const previousPreset = state.playgroundPreset || 'default';
-    const shouldReplace = confirm(`Carregar “${presetDisplayTitle(preset)}”? O código atual do Playground será substituído.`);
+    const shouldReplace = await eeConfirm(`O código atual do Playground será substituído pelo modelo “${presetDisplayTitle(preset)}”.`, { title:'Carregar modelo?', confirmLabel:'Carregar modelo' });
     if (!shouldReplace) {
       presetSelect.value = previousPreset;
       syncPresetPicker();
@@ -4720,8 +4812,8 @@ function initTermPopover() {
   });
 }
 function initResetProgress() {
-  $('#resetProgress').addEventListener('click', () => {
-    if (!confirm('Redefinir todo o progresso salvo neste navegador? A ação apagará aulas, exercícios, projetos e desafios concluídos.')) return;
+  $('#resetProgress').addEventListener('click', async () => {
+    if (!await eeConfirm('Aulas, exercícios, projetos e desafios concluídos neste navegador serão redefinidos.', { title:'Redefinir progresso?', confirmLabel:'Redefinir', tone:'danger' })) return;
     state.completedLessons = []; state.completedExercises = []; state.completedChallenges = []; state.completedProjects = []; state.projectSteps = {}; state.exerciseAttempts = {}; state.exerciseMistakes = []; state.exerciseHistory = {}; state.moduleCheckpoints = {}; state.activity = []; state.studyLog = {}; activeExerciseSession = null;
     saveState(); renderProgress(); renderHome(); renderTracks(); renderExercises(); renderProjects(); renderChallenges();
   });

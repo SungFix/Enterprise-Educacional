@@ -101,6 +101,9 @@ else ok('Sem overflow-x:hidden global mascarando layout');
 const appSource = read('app.js');
 const platformSource = read('platform-features.js');
 const workerSource = read('service-worker.js');
+const nativeDialogPattern = /(?<![\w.])(?:window\.)?(?:confirm|alert|prompt)\s*\(/g;
+if (nativeDialogPattern.test(appSource) || nativeDialogPattern.test(platformSource)) fail('Diálogo nativo do navegador encontrado no código da interface');
+else ok('Ações da interface usam diálogos visuais do Epoch Education');
 const schemaSource = fs.existsSync(path.join(root,'supabase/schema.sql')) ? read('supabase/schema.sql') : '';
 
 if (css.lastIndexOf('Quality consolidation v47') < css.lastIndexOf('Product polish v46')) fail('Camada final de CSS v47 não preservada');
@@ -123,7 +126,7 @@ if (!appSource.includes("'#f5efe6'")) fail('theme-color claro não acompanha a p
 else ok('Theme color Light Mode alinhado');
 if (!appSource.includes("event?.type === 'hashchange'") || !appSource.includes("heading.focus({ preventScroll:true })")) fail('Foco de navegação SPA não tratado');
 else ok('Foco de navegação SPA verificado');
-if (!/appVersion\s*:\s*50/.test(platformSource)) fail('Versão de backup não atualizada para v50');
+if (!/appVersion\s*:\s*53/.test(platformSource)) fail('Versão de backup não atualizada para v53');
 else ok('Versão de backup atualizada');
 if (!workerSource.includes("request.mode === 'navigate'") || /catch\(\(\) => caches\.match\('\.\/index\.html'\)\)/.test(workerSource)) fail('Fallback offline do Service Worker ainda pode devolver HTML para assets');
 else ok('Fallback PWA separado entre navegação e assets');

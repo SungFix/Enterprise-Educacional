@@ -1,4 +1,4 @@
-/* Epoch Education — platform features v50
+/* Epoch Education — platform features v53
  * Cloud sync, PWA install/offline, project checks, study history and recovery.
  */
 
@@ -131,14 +131,14 @@ async function buildEnterpriseBackupPayload(savedProjectsOverride) {
     format:'enterprise-educacional-backup',
     version:2,
     exportedAt:new Date().toISOString(),
-    appVersion:50,
+    appVersion:53,
     state:JSON.parse(JSON.stringify(state)),
     savedProjects
   };
 }
 async function restoreEnterpriseBackupPayload(payload, { confirmReplace = true, reload = true } = {}) {
   if (payload?.format !== 'enterprise-educacional-backup' || !payload.state || typeof payload.state !== 'object') throw new Error('Backup inválido.');
-  if (confirmReplace && !confirm('Restaurar esses dados? O progresso, notas, histórico e projetos salvos deste dispositivo serão substituídos.')) return false;
+  if (confirmReplace && !await eeConfirm('O progresso, notas, histórico e projetos salvos deste dispositivo serão substituídos.', { title:'Restaurar dados?', confirmLabel:'Restaurar', tone:'danger' })) return false;
   localStorage.setItem(storageKey, JSON.stringify(payload.state));
   localStorage.removeItem(legacyStorageKey);
   await replaceSavedCodeProjects(Array.isArray(payload.savedProjects) ? payload.savedProjects : []);
@@ -173,7 +173,7 @@ async function eeCloudPull() {
     const rows = await eeCloudRequest(`/rest/v1/ee_user_data?user_id=eq.${encodeURIComponent(eeCloudSession.user.id)}&select=payload,updated_at&limit=1`, { token:eeCloudSession.access_token });
     const row = Array.isArray(rows) ? rows[0] : null;
     if (!row?.payload) throw new Error('Ainda não há um backup salvo nessa conta.');
-    if (!confirm(`Restaurar o backup da nuvem${row.updated_at ? ` de ${new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(new Date(row.updated_at))}` : ''}? Os dados locais serão substituídos.`)) return;
+    if (!await eeConfirm(`Os dados locais serão substituídos${row.updated_at ? ` pelo backup de ${new Intl.DateTimeFormat('pt-BR',{dateStyle:'short',timeStyle:'short'}).format(new Date(row.updated_at))}` : ' pelo backup salvo na nuvem'}.`, { title:'Restaurar backup da nuvem?', confirmLabel:'Restaurar', tone:'danger' })) return;
     localStorage.setItem('enterprise-educacional-cloud-last-sync-v1', JSON.stringify({ direction:'pull', time:Date.now() }));
     await restoreEnterpriseBackupPayload(row.payload, { confirmReplace:false, reload:true });
   } catch (error) { eeSetCloudMessage(error.message || 'Não foi possível restaurar os dados.', 'error'); }
@@ -322,7 +322,7 @@ async function initPwaFeature() {
     eeDeferredInstallPrompt = null; renderPwaStatus();
   });
   if ('serviceWorker' in navigator && document.documentElement.dataset.standaloneFile !== 'true' && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-    navigator.serviceWorker.register('./service-worker.js?v=50').catch(() => {});
+    navigator.serviceWorker.register('./service-worker.js?v=53').catch(() => {});
   }
   renderPwaStatus();
 }

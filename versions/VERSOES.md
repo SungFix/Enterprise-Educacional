@@ -1,4 +1,4 @@
-# Epoch Education — histórico completo v1 a v51
+# Epoch Education — histórico completo v1 a v53
 
 Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitável/funcional, ainda em evolução; **RELEASE** = marco completo/estável no histórico.
 
@@ -53,3 +53,5 @@ Legenda: **BETA** = versão com erro/regressão conhecida; **ALPHA** = aceitáve
 - **v49 — RELEASE** — Alteração completa da identidade textual para Epoch Education, preservando EE + </>, dados, funcionalidades, compatibilidade de armazenamento, PWA e standalone; publicação final validada pela suíte de qualidade.
 - **v50 — RELEASE** — Correções da auditoria: fullscreen visual do Tkinter, fontes monoespaçadas, feedback via Edge Function com rate limit e bloqueio de INSERT público, Supabase v50 e republicação após renome do repositório; publicação final validada pela suíte de qualidade.
 - **v51 — RELEASE** — Standalone renomeado para `Epoch-Education.html`; o build oficial foi atualizado para gerar exclusivamente o arquivo com o nome atual da marca.
+- **v52 — RELEASE** — Playground ganhou a ação Limpar tudo para apagar HTML, CSS, JavaScript e Python de uma vez, preservando uma versão no Histórico antes da limpeza.
+- **v53 — RELEASE** — Confirmações e entradas nativas do navegador foram substituídas por diálogos próprios do Epoch Education, responsivos e alinhados aos modos Dark e Light.
