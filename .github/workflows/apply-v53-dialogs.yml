@@ -1,0 +1,56 @@
+name: Aplicar diálogos visuais v53
+
+on:
+  push:
+    paths:
+      - '.github/trigger-v53-dialogs.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Aplicar alterações
+        run: python scripts/apply-v53-dialogs.py
+
+      - name: Validar JavaScript e projeto
+        run: |
+          node --check app.js
+          node --check platform-features.js
+          node --check bootstrap.js
+          node --check service-worker.js
+          python scripts/build-standalone.py
+          node scripts/validate.mjs
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          app = Path('app.js').read_text(encoding='utf-8')
+          platform = Path('platform-features.js').read_text(encoding='utf-8')
+          standalone = Path('Epoch-Education.html').read_text(encoding='utf-8')
+          native = re.compile(r'(?<![\w.])(?:window\.)?(?:confirm|alert|prompt)\s*\(')
+          assert not native.search(app)
+          assert not native.search(platform)
+          assert 'ensureEeActionDialog' in app
+          assert "title:'Limpar todos os editores?'" in app
+          assert "title:'Redefinir progresso?'" in app
+          assert "title:'Restaurar backup da nuvem?'" in platform
+          assert 'eeActionDialog' in standalone
+          assert Path('Epoch-Education.html').read_bytes() == Path('index-standalone-preview.html').read_bytes()
+          print('Diálogos visuais v53: OK')
+          PY
+
+      - name: Publicar alteração
+        run: |
+          git config user.name 'Sung_Fix'
+          git config user.email 'actions@users.noreply.github.com'
+          git rm scripts/apply-v53-dialogs.py .github/workflows/apply-v53-dialogs.yml .github/trigger-v53-dialogs.txt
+          git add -A
+          git commit -m 'feat: substitui diálogos nativos pelo visual do Epoch Education v53'
+          git push origin main
