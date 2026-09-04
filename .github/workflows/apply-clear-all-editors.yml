@@ -1,0 +1,102 @@
+name: Aplicar limpar tudo no Playground
+
+on:
+  push:
+    paths:
+      - '.github/trigger-clear-all-editors.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Atualizar Playground
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          index = Path('index.html')
+          text = index.read_text(encoding='utf-8')
+          old = '<button class="editor-more-action danger" id="clearEditor" type="button">Limpar editor</button>'
+          new = old + '<button class="editor-more-action danger" id="clearAllEditors" type="button">Limpar tudo</button>'
+          if old not in text:
+              raise SystemExit('Botão Limpar editor não encontrado no index.html')
+          if 'id="clearAllEditors"' not in text:
+              text = text.replace(old, new, 1)
+          text = text.replace('app.js?v=50', 'app.js?v=52')
+          index.write_text(text, encoding='utf-8')
+
+          app = Path('app.js')
+          text = app.read_text(encoding='utf-8')
+          anchor = """  $('#clearEditor').addEventListener('click', () => {
+    if (!$('#codeEditor').value || confirm(`Limpar o código da aba ${languageLabel(activeLang)}?`)) {
+      savePlaygroundSnapshot('Antes de limpar editor');
+      $('#codeEditor').value = '';
+      $('#codeEditor').dispatchEvent(new Event('input'));
+      $('#codeEditor').focus();
+    }
+  });"""
+          addition = anchor + """
+  $('#clearAllEditors').addEventListener('click', () => {
+    syncPlaygroundBuffer();
+    const languages = ['html', 'css', 'js', 'python'];
+    const hasCode = languages.some(lang => String(pg[lang] || '').trim());
+    if (hasCode && !confirm('Limpar todos os editores? HTML, CSS, JavaScript e Python serão apagados.')) return;
+    if (hasCode) savePlaygroundSnapshot('Antes de limpar todos os editores');
+    languages.forEach(lang => { pg[lang] = ''; });
+    state.playground = { ...pg };
+    state.playgroundLang = activeLang;
+    saveState();
+    updateEditor();
+    runPlayground();
+    $('#codeEditor').focus();
+    showToast('Todos os editores foram limpos.');
+  });"""
+          if anchor not in text:
+              raise SystemExit('Handler Limpar editor não encontrado no app.js')
+          if "$('#clearAllEditors').addEventListener" not in text:
+              text = text.replace(anchor, addition, 1)
+          app.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Gerar e validar
+        shell: bash
+        run: |
+          node --check app.js
+          node --check platform-features.js
+          node --check bootstrap.js
+          node --check service-worker.js
+          python scripts/build-standalone.py
+          node scripts/validate.mjs
+          python - <<'PY'
+          from pathlib import Path
+          index = Path('index.html').read_text(encoding='utf-8')
+          app = Path('app.js').read_text(encoding='utf-8')
+          standalone = Path('Epoch-Education.html').read_text(encoding='utf-8')
+          assert index.count('id="clearAllEditors"') == 1
+          assert "$('#clearAllEditors').addEventListener" in app
+          assert "['html', 'css', 'js', 'python']" in app
+          assert "Antes de limpar todos os editores" in app
+          assert index.index('id="clearAllEditors"') < index.index('id="fullscreenPlayground"')
+          assert 'id="clearAllEditors"' in standalone
+          assert "$('#clearAllEditors').addEventListener" in standalone
+          assert Path('Epoch-Education.html').read_bytes() == Path('index-standalone-preview.html').read_bytes()
+          print('Limpar tudo: OK')
+          PY
+
+      - name: Commit final
+        shell: bash
+        run: |
+          git config user.name 'Sung_Fix'
+          git config user.email 'actions@users.noreply.github.com'
+          git rm .github/workflows/apply-clear-all-editors.yml .github/trigger-clear-all-editors.txt
+          git add -A
+          git commit -m 'feat: adiciona limpar todos os editores do Playground'
+          git push origin main
